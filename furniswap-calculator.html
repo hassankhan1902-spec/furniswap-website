@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Swap Calculator — FurniSwap</title>
+<meta name="description" content="Estimate your swap value instantly. See what you'll pay for a brand new home setup after your old furniture is deducted.">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#F5EFE6;--cream-dark:#EDE4D6;--ink:#1a1208;--ink-soft:#3a2e26;
+  --terra:#C45C2A;--terra-light:#E07848;--forest:#3D6741;--forest-light:#527A4E;
+  --gold:#c8922a;--muted:#7a6e5f;--border:rgba(26,18,8,0.1);--sage:#4a6741;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);overflow-x:hidden;min-height:100vh;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:24px 48px;display:flex;align-items:center;justify-content:space-between;transition:all 0.4s ease;}
+nav.scrolled{background:rgba(245,239,230,0.92);backdrop-filter:blur(12px);padding:16px 48px;border-bottom:1px solid var(--border);}
+.nav-brand{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:700;color:var(--ink);text-decoration:none;}
+.nav-brand span{color:var(--terra);}
+.nav-links{display:flex;gap:36px;list-style:none;}
+.nav-links a{font-size:13px;color:var(--ink-soft);text-decoration:none;transition:color 0.2s;}
+.nav-links a:hover,.nav-links a.active{color:var(--terra);}
+.nav-cta{background:var(--ink);color:var(--cream)!important;padding:10px 22px;border-radius:2px;font-weight:500!important;}
+.nav-cta:hover{background:var(--terra)!important;}
+.hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:6px;}
+.hamburger span{display:block;width:24px;height:2px;background:var(--ink);border-radius:2px;transition:all 0.3s ease;}
+.hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+.hamburger.open span:nth-child(2){opacity:0;}
+.hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+.mobile-menu{display:none;position:fixed;inset:0;background:var(--cream);z-index:200;flex-direction:column;align-items:center;justify-content:center;opacity:0;transition:opacity 0.3s ease;}
+.mobile-menu.open{display:flex;opacity:1;}
+.mobile-menu-brand{position:absolute;top:24px;left:28px;font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;color:var(--ink);text-decoration:none;}
+.mobile-menu-brand span{color:var(--terra);}
+.mobile-menu-links a{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:700;color:var(--ink);text-decoration:none;padding:14px 40px;width:100%;text-align:center;border-bottom:1px solid var(--border);display:block;transition:color 0.2s;}
+.mobile-menu-links a:first-child{border-top:1px solid var(--border);}
+.mobile-menu-links a:hover{color:var(--terra);}
+.mobile-menu-cta{margin-top:24px!important;background:var(--terra)!important;color:#fff!important;border-radius:2px;font-size:16px!important;font-family:'DM Sans',sans-serif!important;font-weight:500!important;padding:14px 40px!important;border-top:none!important;}
+
+/* PAGE HERO */
+.page-hero{padding:140px 48px 60px;background:var(--ink);position:relative;overflow:hidden;}
+.page-hero::before{content:'';position:absolute;width:400px;height:400px;border-radius:50%;top:-100px;right:-80px;background:radial-gradient(circle,rgba(200,146,42,0.1) 0%,transparent 70%);pointer-events:none;}
+.page-hero-inner{max-width:900px;margin:0 auto;}
+.page-breadcrumb{font-size:12px;color:rgba(255,255,255,0.35);margin-bottom:20px;letter-spacing:1px;}
+.page-breadcrumb a{color:var(--gold);text-decoration:none;}
+.page-hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(36px,5vw,60px);font-weight:700;color:#fff;letter-spacing:-1px;line-height:1.1;margin-bottom:16px;}
+.page-hero h1 em{font-style:italic;color:var(--gold);}
+.page-hero p{font-size:15px;color:rgba(255,255,255,0.45);max-width:480px;line-height:1.7;font-weight:300;}
+
+/* CALC LAYOUT */
+.calc-wrap{max-width:900px;margin:0 auto;padding:60px 48px;}
+.calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start;}
+
+/* LEFT PANEL */
+.how-panel{background:var(--ink);border-radius:6px;padding:32px;}
+.how-panel-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;color:#fff;margin-bottom:24px;}
+.how-step-row{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid rgba(255,255,255,0.06);align-items:flex-start;}
+.how-step-row:last-child{border-bottom:none;}
+.step-badge{width:28px;height:28px;border-radius:50%;background:rgba(200,146,42,0.15);color:var(--gold);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0;margin-top:2px;}
+.step-row-text{font-size:13px;color:rgba(255,255,255,0.6);line-height:1.6;}
+.step-row-text strong{color:#fff;font-weight:500;display:block;margin-bottom:2px;}
+
+/* CALC CARD */
+.calc-card{background:#fff;border:1px solid var(--border);border-radius:6px;padding:32px;}
+.calc-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;color:var(--ink);margin-bottom:24px;}
+.calc-label{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:500;display:block;margin-bottom:10px;}
+.calc-btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;}
+.calc-btn{padding:10px 14px;border:1.5px solid var(--border);border-radius:3px;background:#fff;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif;min-height:44px;transition:all 0.2s;flex:1;}
+.calc-btn:hover{border-color:var(--terra);color:var(--terra);}
+.calc-btn.active{border-color:var(--terra);background:rgba(196,92,42,0.06);color:var(--terra);font-weight:600;}
+.calc-divider{height:1px;background:var(--border);margin:20px 0;}
+
+/* RESULT */
+.result-box{background:var(--cream-dark);border-radius:4px;padding:24px;border-left:3px solid var(--terra);animation:pop 0.3s ease;}
+@keyframes pop{from{transform:scale(0.97);opacity:0.7}to{transform:scale(1);opacity:1}}
+.result-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);}
+.result-row:last-of-type{border-bottom:none;padding-bottom:0;}
+.result-label{font-size:13px;color:var(--muted);}
+.result-val{font-size:14px;font-weight:600;color:var(--ink);}
+.result-credit{color:var(--forest);font-weight:600;}
+.result-final{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:700;color:var(--terra);}
+.result-note{font-size:11px;color:var(--muted);line-height:1.6;margin-top:12px;padding-top:12px;border-top:1px solid var(--border);}
+.wa-btn-calc{display:block;text-align:center;background:var(--terra);color:#fff;padding:14px;border-radius:2px;text-decoration:none;font-size:13px;font-weight:500;margin-top:16px;transition:opacity 0.2s;min-height:44px;line-height:1.2;display:flex;align-items:center;justify-content:center;}
+.wa-btn-calc:hover{opacity:0.88;}
+.reset-btn{background:none;border:none;font-size:12px;color:var(--muted);cursor:pointer;text-decoration:underline;font-family:'DM Sans',sans-serif;padding:8px 0;width:100%;text-align:center;display:block;margin-top:4px;}
+.reset-btn:hover{color:var(--terra);}
+
+/* FOOTER */
+footer{background:var(--ink);padding:48px;}
+.footer-inner{max-width:900px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:24px;}
+.footer-brand-sm{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;color:#fff;}
+.footer-brand-sm span{color:var(--terra);}
+.footer-links-sm{display:flex;gap:24px;list-style:none;flex-wrap:wrap;}
+.footer-links-sm a{font-size:13px;color:rgba(255,255,255,0.35);text-decoration:none;transition:color 0.2s;}
+.footer-links-sm a:hover{color:rgba(255,255,255,0.7);}
+.footer-wa-sm{font-size:13px;color:rgba(255,255,255,0.4);}
+.footer-wa-sm strong{color:var(--gold);}
+
+.scroll-progress{position:fixed;top:0;left:0;height:3px;width:0%;background:linear-gradient(90deg,var(--terra),var(--gold));z-index:999;box-shadow:0 1px 4px rgba(196,92,42,0.4);}
+
+@media(max-width:768px){
+  nav{padding:20px 24px;}
+  nav.scrolled{padding:14px 24px;}
+  .nav-links{display:none;}
+  .hamburger{display:flex;}
+  .page-hero{padding:120px 24px 48px;}
+  .calc-wrap{padding:40px 20px;}
+  .calc-grid{grid-template-columns:1fr;}
+  footer{padding:32px 20px;}
+  .footer-inner{flex-direction:column;align-items:flex-start;gap:16px;}
+  .calc-btn-row{gap:6px;}
+  .calc-btn{min-width:0;font-size:12px;padding:10px 8px;}
+}
+</style>
+</head>
+<body>
+
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="furniswap-website.html" class="mobile-menu-brand">Furni<span>Swap</span></a>
+  <div class="mobile-menu-links">
+    <a href="furniswap-website.html#how" onclick="closeMobileMenu()">How It Works</a>
+    <a href="furniswap-website.html#packages" onclick="closeMobileMenu()">Packages</a>
+    <a href="furniswap-catalogue.html" onclick="closeMobileMenu()">Catalogue</a>
+    <a href="furniswap-calculator.html" onclick="closeMobileMenu()" style="color:var(--terra);">Calculator</a>
+    <a href="furniswap-website.html#why" onclick="closeMobileMenu()">Why Us</a>
+    <a href="furniswap-website.html#faq" onclick="closeMobileMenu()">FAQ</a>
+    <a href="https://wa.me/923437761250" class="mobile-menu-cta">Get Started →</a>
+  </div>
+</div>
+
+<nav id="navbar">
+  <a href="furniswap-website.html" class="nav-brand">Furni<span>Swap</span></a>
+  <ul class="nav-links">
+    <li><a href="furniswap-website.html#how">How It Works</a></li>
+    <li><a href="furniswap-website.html#packages">Packages</a></li>
+    <li><a href="furniswap-catalogue.html">Catalogue</a></li>
+    <li><a href="furniswap-calculator.html" class="active">Calculator</a></li>
+    <li><a href="furniswap-website.html#why">Why Us</a></li>
+    <li><a href="furniswap-website.html#faq">FAQ</a></li>
+    <li><a href="https://wa.me/923437761250" class="nav-cta">Get Started</a></li>
+  </ul>
+  <button class="hamburger" id="hamburger" onclick="toggleMobileMenu()" aria-label="Toggle menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<div class="page-hero">
+  <div class="page-hero-inner">
+    <div class="page-breadcrumb"><a href="furniswap-website.html">Home</a> · Swap Calculator</div>
+    <h1>See what you'll<br><em>actually pay</em></h1>
+    <p>Pick your package, tell us your furniture condition, and get an instant estimate of your swap value — before you even contact us.</p>
+  </div>
+</div>
+
+<div class="calc-wrap">
+  <div class="calc-grid">
+
+    <!-- LEFT: How it works -->
+    <div class="how-panel">
+      <div class="how-panel-title">How Swap Value Works</div>
+      <div class="how-step-row">
+        <div class="step-badge">1</div>
+        <div class="step-row-text"><strong>You pick a package</strong>Choose your apartment or house size and tier — Economy, Standard, or Premium.</div>
+      </div>
+      <div class="how-step-row">
+        <div class="step-badge">2</div>
+        <div class="step-row-text"><strong>We assess your old furniture</strong>Our team visits free of charge. We check condition and give you a swap value on the spot.</div>
+      </div>
+      <div class="how-step-row">
+        <div class="step-badge">3</div>
+        <div class="step-row-text"><strong>Swap value is deducted</strong>The value of your old furniture comes straight off the package price. You pay only the difference.</div>
+      </div>
+      <div class="how-step-row">
+        <div class="step-badge">4</div>
+        <div class="step-row-text"><strong>We do the rest</strong>Delivery, installation, and collection of old furniture — all handled by our team.</div>
+      </div>
+      <div style="margin-top:24px;padding:16px;background:rgba(200,146,42,0.08);border-radius:4px;border-left:3px solid var(--gold);">
+        <div style="font-size:12px;color:rgba(255,255,255,0.5);line-height:1.7;">This calculator gives an <strong style="color:var(--gold);">estimate only.</strong> Actual swap value is confirmed during your free in-home assessment with no commitment required.</div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Calculator -->
+    <div class="calc-card">
+      <div class="calc-title">Estimate Your Swap Value</div>
+
+      <!-- Property Type -->
+      <span class="calc-label">Property Type</span>
+      <div class="calc-btn-row" id="propBtns" style="margin-bottom:20px;">
+        <button class="calc-btn active" onclick="selectProp('apartment',this)">🏢 Apartment</button>
+        <button class="calc-btn" onclick="selectProp('house',this)">🏠 House</button>
+      </div>
+
+      <!-- Tier -->
+      <span class="calc-label">Package Tier</span>
+      <div class="calc-btn-row" id="tierBtns">
+        <button class="calc-btn active" onclick="selectCalc('tier','economy',this)">Economy</button>
+        <button class="calc-btn" onclick="selectCalc('tier','standard',this)">Standard</button>
+        <button class="calc-btn" onclick="selectCalc('tier','premium',this)">Premium</button>
+      </div>
+
+      <!-- Size -->
+      <span class="calc-label" id="sizeLabel">Apartment Size</span>
+      <div class="calc-btn-row" id="sizeBtns"></div>
+
+      <!-- Condition -->
+      <span class="calc-label">Old Furniture Condition</span>
+      <div class="calc-btn-row" id="condBtns">
+        <button class="calc-btn active" onclick="selectCalc('condition','good',this)">Good</button>
+        <button class="calc-btn" onclick="selectCalc('condition','fair',this)">Fair</button>
+        <button class="calc-btn" onclick="selectCalc('condition','poor',this)">Poor</button>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:-12px;margin-bottom:20px;">
+        <div style="font-size:10px;color:var(--muted);text-align:center;">Like new</div>
+        <div style="font-size:10px;color:var(--muted);text-align:center;">Normal wear</div>
+        <div style="font-size:10px;color:var(--muted);text-align:center;">Heavily used</div>
+      </div>
+
+      <div class="calc-divider"></div>
+
+      <!-- Result -->
+      <div class="result-box" id="resultBox">
+        <div class="result-row">
+          <span class="result-label">Package value</span>
+          <span class="result-val" id="resPackage">Rs. 3,80,000</span>
+        </div>
+        <div class="result-row">
+          <span class="result-label">Est. swap credit</span>
+          <span class="result-credit" id="resCredit">− Rs. 83,600</span>
+        </div>
+        <div class="result-row" style="padding-top:14px;">
+          <span style="font-size:15px;font-weight:500;color:var(--ink);">You pay approx.</span>
+          <span class="result-final" id="resFinal">Rs. 2,96,400</span>
+        </div>
+        <div class="result-note">* Estimate only. Actual value confirmed at free in-home assessment.</div>
+        <a href="https://wa.me/923437761250?text=Hi%20FurniSwap!%20I%20used%20the%20calculator%20and%20want%20to%20book%20a%20free%20assessment." class="wa-btn-calc">📱 Book Free Assessment →</a>
+        <button class="reset-btn" onclick="resetCalc()">Start over</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand-sm">Furni<span>Swap</span></div>
+    <ul class="footer-links-sm">
+      <li><a href="furniswap-website.html">Home</a></li>
+      <li><a href="furniswap-website.html#packages">Packages</a></li>
+      <li><a href="furniswap-catalogue.html">Catalogue</a></li>
+      <li><a href="furniswap-website.html#faq">FAQ</a></li>
+    </ul>
+    <div class="footer-wa-sm">💬 <strong>0343 7761250</strong> · Islamabad & Rawalpindi</div>
+  </div>
+</footer>
+
+<script>
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  navbar.classList.toggle('scrolled', window.scrollY > 60);
+  document.getElementById('scrollProgress').style.width =
+    (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight) * 100) + '%';
+}, {passive:true});
+
+function toggleMobileMenu(){
+  const m=document.getElementById('mobileMenu'),h=document.getElementById('hamburger');
+  const o=m.classList.contains('open');
+  m.classList.toggle('open',!o);h.classList.toggle('open',!o);
+  document.body.style.overflow=o?'':'hidden';
+}
+function closeMobileMenu(){
+  document.getElementById('mobileMenu').classList.remove('open');
+  document.getElementById('hamburger').classList.remove('open');
+  document.body.style.overflow='';
+}
+
+const prices = {
+  apartment:{economy:{'1BR':380000,'2BR':580000,'3BR':780000},standard:{'1BR':750000,'2BR':1100000,'3BR':1450000},premium:{'1BR':1200000,'2BR':1800000,'3BR':2200000}},
+  house:{economy:{'5 Marla':850000,'10 Marla':1300000,'1 Kanal':1900000,'2 Kanal':2800000,'5 Kanal':4800000},standard:{'5 Marla':1600000,'10 Marla':2400000,'1 Kanal':3500000,'2 Kanal':5000000,'5 Kanal':8500000},premium:{'5 Marla':2800000,'10 Marla':4200000,'1 Kanal':6200000,'2 Kanal':9000000,'5 Kanal':15000000}}
+};
+const condRate={good:0.22,fair:0.15,poor:0.08};
+const aptSizes=['1BR','2BR','3BR'];
+const houseSizes=['5 Marla','10 Marla','1 Kanal','2 Kanal','5 Kanal'];
+let state={prop:'apartment',tier:'economy',size:'1BR',condition:'good'};
+
+function fmt(n){
+  if(n>=10000000)return'Rs. '+(n/10000000).toFixed(1)+' Cr';
+  if(n>=100000)return'Rs. '+(n/100000).toFixed(2).replace(/\.?0+$/,'')+' Lakh';
+  return'Rs. '+n.toLocaleString('en-PK');
+}
+
+function updateResult(){
+  const priceMap=prices[state.prop][state.tier];
+  const pkg=priceMap[state.size]||Object.values(priceMap)[0];
+  const credit=Math.round(pkg*condRate[state.condition]);
+  const pays=pkg-credit;
+  document.getElementById('resPackage').textContent=fmt(pkg);
+  document.getElementById('resCredit').textContent='− '+fmt(credit);
+  document.getElementById('resFinal').textContent=fmt(pays);
+  const box=document.getElementById('resultBox');
+  box.style.animation='none';box.offsetHeight;box.style.animation='pop 0.3s ease';
+}
+
+function initSizeBtns(){
+  const sizes=state.prop==='apartment'?aptSizes:houseSizes;
+  if(!sizes.includes(state.size))state.size=sizes[0];
+  document.getElementById('sizeLabel').textContent=state.prop==='apartment'?'Apartment Size':'House Size';
+  const row=document.getElementById('sizeBtns');
+  row.innerHTML=sizes.map((s,i)=>`<button class="calc-btn${s===state.size?' active':''}" onclick="selectCalc('size','${s}',this)">${s}</button>`).join('');
+}
+
+function selectProp(val,btn){
+  state.prop=val;
+  document.querySelectorAll('#propBtns .calc-btn').forEach(b=>{b.classList.remove('active');});
+  btn.classList.add('active');
+  initSizeBtns();updateResult();
+}
+
+function selectCalc(type,val,btn){
+  state[type]=val;
+  const map={tier:'tierBtns',size:'sizeBtns',condition:'condBtns'};
+  document.querySelectorAll(`#${map[type]} .calc-btn`).forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  updateResult();
+}
+
+function resetCalc(){
+  state={prop:'apartment',tier:'economy',size:'1BR',condition:'good'};
+  document.querySelectorAll('#propBtns .calc-btn').forEach((b,i)=>b.classList.toggle('active',i===0));
+  document.querySelectorAll('#tierBtns .calc-btn').forEach((b,i)=>b.classList.toggle('active',i===0));
+  document.querySelectorAll('#condBtns .calc-btn').forEach((b,i)=>b.classList.toggle('active',i===0));
+  initSizeBtns();updateResult();
+}
+
+initSizeBtns();updateResult();
+</script>
+</body>
+</html>

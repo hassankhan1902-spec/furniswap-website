@@ -1,0 +1,2357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FurniSwap — Pakistan's First Furniture Swapping Platform</title>
+<meta name="description" content="Hand us your old furniture, walk into a brand new home. Pakistan's first furniture swapping platform — delivery, installation & pickup included. Islamabad & Rawalpindi.">
+<meta name="theme-color" content="#C45C2A">
+<!-- Open Graph (WhatsApp / Facebook preview) -->
+<meta property="og:title" content="FurniSwap — Pakistan's First Furniture Swap Platform">
+<meta property="og:description" content="Give us your old furniture. Get a complete new home setup for just the difference. Islamabad & Rawalpindi.">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="en_PK">
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="FurniSwap Pakistan">
+<meta name="twitter:description" content="Pakistan's first furniture swapping platform. Old furniture out, new setup in.">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cream: #F5EFE6;
+  --cream-dark: #EDE4D6;
+  --ink: #1C1410;
+  --ink-soft: #3a2e26;
+  --terra: #C45C2A;
+  --terra-light: #E07848;
+  --forest: #3D5E3A;
+  --forest-light: #527A4E;
+  --gold: #D4A843;
+  --muted: #8a7a6e;
+  --border: rgba(28,20,16,0.1);
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; font-size: 16px; scroll-padding-top: 80px; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--cream);
+  color: var(--ink);
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* CUSTOM CURSOR */
+.cursor {
+  width: 10px; height: 10px;
+  background: var(--terra);
+  border-radius: 50%;
+  position: fixed;
+  top: 0; left: 0;
+  pointer-events: none;
+  z-index: 9999;
+  transition: transform 0.15s ease, background 0.2s;
+  transform: translate(-50%, -50%);
+}
+
+.cursor-follower {
+  width: 36px; height: 36px;
+  border: 1.5px solid var(--terra);
+  border-radius: 50%;
+  position: fixed;
+  top: 0; left: 0;
+  pointer-events: none;
+  z-index: 9998;
+  transform: translate(-50%, -50%);
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  opacity: 0.6;
+}
+
+body:hover .cursor { opacity: 1; }
+
+/* NAV */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  padding: 24px 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.4s ease;
+}
+
+nav.scrolled {
+  background: rgba(245,239,230,0.92);
+  backdrop-filter: blur(12px);
+  padding: 16px 48px;
+  border-bottom: 1px solid var(--border);
+}
+
+.nav-brand {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--ink);
+  text-decoration: none;
+  letter-spacing: -0.5px;
+}
+
+.nav-brand span { color: var(--terra); }
+
+.nav-links {
+  display: flex;
+  gap: 36px;
+  list-style: none;
+}
+
+.nav-links a {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--ink-soft);
+  text-decoration: none;
+  letter-spacing: 0.5px;
+  transition: color 0.2s;
+}
+
+.nav-links a:hover { color: var(--terra); }
+
+.nav-cta {
+  background: var(--ink);
+  color: var(--cream) !important;
+  padding: 10px 22px;
+  border-radius: 2px;
+  font-weight: 500 !important;
+  font-size: 13px !important;
+  transition: background 0.2s !important;
+}
+
+.nav-cta:hover { background: var(--terra) !important; color: var(--cream) !important; }
+
+/* HERO */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  padding: 120px 48px 80px;
+}
+
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background: var(--cream);
+  z-index: 0;
+}
+
+.hero-circle {
+  position: absolute;
+  border-radius: 50%;
+}
+
+.hero-circle-1 {
+  width: 600px; height: 600px;
+  right: -100px; top: -100px;
+  background: radial-gradient(circle, rgba(196,92,42,0.08) 0%, transparent 70%);
+}
+
+.hero-circle-2 {
+  width: 400px; height: 400px;
+  left: -80px; bottom: 0;
+  background: radial-gradient(circle, rgba(61,94,58,0.07) 0%, transparent 70%);
+}
+
+.hero-grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-size: 200px;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 420px;
+  gap: 60px;
+  align-items: center;
+}
+
+.hero-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 28px;
+  opacity: 0;
+  animation: fadeUp 0.8s ease 0.2s forwards;
+}
+
+.eyebrow-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--terra);
+}
+
+.eyebrow-text {
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--terra);
+  font-weight: 500;
+}
+
+.hero-headline {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(52px, 7vw, 88px);
+  font-weight: 700;
+  line-height: 1.0;
+  letter-spacing: -2px;
+  color: var(--ink);
+  margin-bottom: 28px;
+  opacity: 0;
+  animation: fadeUp 0.8s ease 0.35s forwards;
+}
+
+.hero-headline em {
+  font-style: italic;
+  color: var(--terra);
+}
+
+.hero-headline .line-forest { color: var(--forest); }
+
+.hero-sub {
+  font-size: 16px;
+  color: var(--muted);
+  line-height: 1.7;
+  max-width: 460px;
+  margin-bottom: 44px;
+  font-weight: 300;
+  opacity: 0;
+  animation: fadeUp 0.8s ease 0.5s forwards;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  opacity: 0;
+  animation: fadeUp 0.8s ease 0.65s forwards;
+}
+
+.btn-primary {
+  background: var(--terra);
+  color: #fff;
+  padding: 16px 36px;
+  border: none;
+  border-radius: 2px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: none;
+  text-decoration: none;
+  transition: background 0.2s, transform 0.15s;
+  display: inline-block;
+}
+
+.btn-primary:hover { background: var(--terra-light); transform: translateY(-1px); }
+
+.btn-ghost {
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 400;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: gap 0.2s;
+}
+
+.btn-ghost:hover { gap: 14px; color: var(--terra); }
+
+.btn-ghost .arrow { font-size: 18px; }
+
+/* HERO CARD */
+.hero-card {
+  background: var(--ink);
+  border-radius: 4px;
+  padding: 40px 36px;
+  position: relative;
+  overflow: hidden;
+  opacity: 0;
+  animation: fadeLeft 0.8s ease 0.5s forwards;
+}
+
+.hero-card::before {
+  content: '';
+  position: absolute;
+  top: -60px; right: -60px;
+  width: 200px; height: 200px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(212,168,67,0.12) 0%, transparent 70%);
+}
+
+.card-label {
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--gold);
+  font-weight: 500;
+  margin-bottom: 20px;
+}
+
+.card-steps { list-style: none; }
+
+.card-step {
+  display: flex;
+  gap: 16px;
+  padding: 16px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  align-items: flex-start;
+}
+
+.card-step:last-child { border-bottom: none; }
+
+.step-icon {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.step-icon.terra { background: rgba(196,92,42,0.15); }
+.step-icon.forest { background: rgba(61,94,58,0.15); }
+.step-icon.gold { background: rgba(212,168,67,0.15); }
+.step-icon.blue { background: rgba(74,120,200,0.15); }
+
+.step-content {}
+.step-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: #fff;
+  margin-bottom: 3px;
+}
+
+.step-desc { font-size: 12px; color: rgba(255,255,255,0.45); line-height: 1.5; }
+
+.hero-card-footer {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.footer-text { font-size: 12px; color: rgba(255,255,255,0.4); }
+.footer-badge {
+  background: var(--forest);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 6px 14px;
+  border-radius: 20px;
+}
+
+/* STATS BAR */
+.stats-bar {
+  background: var(--ink);
+  padding: 40px 48px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+}
+
+.stat-item {
+  text-align: center;
+  padding: 16px 24px;
+  border-right: 1px solid rgba(255,255,255,0.07);
+}
+
+.stat-item:last-child { border-right: none; }
+
+.stat-number {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 48px;
+  font-weight: 700;
+  color: var(--gold);
+  line-height: 1;
+  display: block;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: rgba(255,255,255,0.4);
+  margin-top: 6px;
+  letter-spacing: 0.5px;
+}
+
+/* SECTIONS */
+section { padding: 100px 48px; }
+
+.section-inner { max-width: 1200px; margin: 0 auto; }
+
+.section-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.section-tag {
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--terra);
+  font-weight: 500;
+}
+
+.section-line {
+  height: 1px;
+  flex: 1;
+  background: var(--border);
+  max-width: 60px;
+}
+
+h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(36px, 5vw, 56px);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -1px;
+  margin-bottom: 20px;
+}
+
+h2 em { font-style: italic; color: var(--terra); }
+
+/* HOW IT WORKS */
+.how-section { background: var(--cream-dark); }
+
+.how-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+  margin-top: 60px;
+}
+
+.how-steps { }
+
+.how-step {
+  display: flex;
+  gap: 24px;
+  padding: 28px 0;
+  border-bottom: 1px solid var(--border);
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.6s ease;
+}
+
+.how-step.visible { opacity: 1; transform: translateY(0); }
+.how-step:first-child { padding-top: 0; }
+
+.step-num-big {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 56px;
+  font-weight: 700;
+  line-height: 1;
+  color: rgba(28,20,16,0.08);
+  min-width: 52px;
+  flex-shrink: 0;
+}
+
+.step-body {}
+.step-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--ink);
+}
+
+.step-text {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.7;
+  font-weight: 300;
+}
+
+.how-visual {
+  background: var(--ink);
+  border-radius: 4px;
+  padding: 48px;
+  position: relative;
+  overflow: hidden;
+  min-height: 420px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  opacity: 0;
+  transform: translateX(30px);
+  transition: all 0.7s ease 0.2s;
+}
+
+.how-visual.visible { opacity: 1; transform: translateX(0); }
+
+.how-visual::before {
+  content: '🏠';
+  position: absolute;
+  font-size: 180px;
+  top: 20px;
+  right: -20px;
+  opacity: 0.07;
+  line-height: 1;
+}
+
+.how-visual-label {
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 12px;
+}
+
+.how-visual-headline {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 32px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.2;
+  margin-bottom: 20px;
+}
+
+.how-tags {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.how-tag {
+  background: rgba(255,255,255,0.07);
+  color: rgba(255,255,255,0.6);
+  font-size: 12px;
+  padding: 7px 14px;
+  border-radius: 20px;
+}
+
+/* PACKAGES */
+.pkg-section { background: var(--cream); }
+
+.pkg-intro {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: end;
+  margin-bottom: 60px;
+}
+
+.pkg-sub {
+  font-size: 15px;
+  color: var(--muted);
+  line-height: 1.7;
+  font-weight: 300;
+  align-self: end;
+}
+
+.pkg-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.pkg-card {
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  opacity: 0;
+  transform: translateY(30px);
+  background: #fff;
+}
+
+.pkg-card.visible { opacity: 1; transform: translateY(0); }
+.pkg-card:hover { transform: translateY(-6px); box-shadow: 0 20px 60px rgba(28,20,16,0.1); }
+
+.pkg-card.featured {
+  border-color: var(--terra);
+  position: relative;
+}
+
+.pkg-featured-badge {
+  position: absolute;
+  top: 16px; right: 16px;
+  background: var(--terra);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border-radius: 2px;
+}
+
+.pkg-header {
+  padding: 32px 28px 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.pkg-tier {
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+.tier-eco { color: var(--forest); }
+.tier-std { color: var(--terra); }
+.tier-prm { color: var(--gold); }
+
+.pkg-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: var(--ink);
+}
+
+.pkg-price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.pkg-price {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.pkg-price-note {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.pkg-sizes {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.pkg-size-btn {
+  font-size: 12px;
+  padding: 6px 14px;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  background: none;
+  cursor: none;
+  color: var(--muted);
+  transition: all 0.2s;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.pkg-size-btn.active, .pkg-size-btn:hover {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: #fff;
+}
+
+.pkg-body { padding: 24px 28px; }
+
+.pkg-features { list-style: none; }
+
+.pkg-features li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--ink-soft);
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.pkg-features li:last-child { border-bottom: none; }
+
+.feat-check {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  flex-shrink: 0;
+}
+
+.check-forest { background: rgba(61,94,58,0.12); color: var(--forest); }
+.check-terra { background: rgba(196,92,42,0.12); color: var(--terra); }
+.check-gold { background: rgba(212,168,67,0.12); color: var(--gold); }
+
+.pkg-footer { padding: 0 28px 28px; }
+
+.pkg-btn {
+  display: block;
+  text-align: center;
+  padding: 14px;
+  border-radius: 2px;
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.2s;
+  cursor: none;
+}
+
+.pkg-btn-outline {
+  border: 1.5px solid var(--ink);
+  color: var(--ink);
+}
+
+.pkg-btn-outline:hover { background: var(--ink); color: #fff; }
+
+.pkg-btn-fill {
+  background: var(--terra);
+  color: #fff;
+  border: 1.5px solid var(--terra);
+}
+
+.pkg-btn-fill:hover { background: var(--terra-light); }
+
+/* WHY */
+.why-section { background: var(--forest); }
+
+.why-section h2 { color: #fff; }
+.why-section h2 em { color: var(--gold); }
+
+.why-section .section-tag { color: var(--gold); }
+.why-section .section-line { background: rgba(255,255,255,0.1); }
+
+.why-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+  margin-top: 60px;
+  background: rgba(255,255,255,0.06);
+}
+
+.why-card {
+  background: rgba(255,255,255,0.03);
+  padding: 40px 32px;
+  transition: background 0.3s;
+}
+
+.why-card:hover { background: rgba(255,255,255,0.07); }
+
+.why-icon {
+  font-size: 32px;
+  margin-bottom: 20px;
+  display: block;
+}
+
+.why-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 12px;
+}
+
+.why-text {
+  font-size: 13px;
+  color: rgba(255,255,255,0.5);
+  line-height: 1.7;
+  font-weight: 300;
+}
+
+/* FAQ */
+.faq-section { background: var(--cream); }
+
+.faq-layout {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: 80px;
+  margin-top: 20px;
+}
+
+.faq-left {}
+.faq-left p {
+  font-size: 15px;
+  color: var(--muted);
+  line-height: 1.7;
+  font-weight: 300;
+  margin-top: 20px;
+  margin-bottom: 32px;
+}
+
+.faq-contact-card {
+  background: var(--ink);
+  padding: 28px;
+  border-radius: 4px;
+}
+
+.faq-contact-label {
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 8px;
+}
+
+.faq-contact-text {
+  font-size: 14px;
+  color: rgba(255,255,255,0.6);
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+
+.faq-wa-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #25D366;
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: 2px;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  transition: opacity 0.2s;
+  cursor: none;
+}
+
+.faq-wa-btn:hover { opacity: 0.88; }
+
+.faq-list { }
+
+.faq-item {
+  border-bottom: 1px solid var(--border);
+  opacity: 0;
+  transform: translateY(16px);
+  transition: all 0.5s ease;
+}
+
+.faq-item.visible { opacity: 1; transform: translateY(0); }
+
+.faq-question {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 0;
+  cursor: none;
+  gap: 20px;
+}
+
+.faq-q-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.3;
+}
+
+.faq-toggle {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  color: var(--muted);
+  flex-shrink: 0;
+  transition: all 0.2s;
+  background: none;
+  cursor: none;
+}
+
+.faq-item.open .faq-toggle {
+  background: var(--terra);
+  border-color: var(--terra);
+  color: #fff;
+  transform: rotate(45deg);
+}
+
+.faq-answer {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.75;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease, padding 0.3s;
+  font-weight: 300;
+}
+
+.faq-item.open .faq-answer { max-height: 600px; padding-bottom: 24px; }
+
+/* CTA */
+.cta-section {
+  background: var(--terra);
+  padding: 100px 48px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.cta-section::before {
+  content: 'FURNISWAP';
+  position: absolute;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 200px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.05);
+  white-space: nowrap;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  letter-spacing: -4px;
+  pointer-events: none;
+}
+
+.cta-section h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(40px, 6vw, 72px);
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 20px;
+  letter-spacing: -1.5px;
+  position: relative;
+}
+
+.cta-section p {
+  font-size: 16px;
+  color: rgba(255,255,255,0.7);
+  margin-bottom: 48px;
+  font-weight: 300;
+  position: relative;
+}
+
+.cta-actions {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.btn-white {
+  background: #fff;
+  color: var(--terra);
+  padding: 18px 44px;
+  border-radius: 2px;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: none;
+  display: inline-block;
+}
+
+.btn-white:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(0,0,0,0.15); }
+
+.btn-outline-white {
+  border: 1.5px solid rgba(255,255,255,0.5);
+  color: #fff;
+  padding: 17px 36px;
+  border-radius: 2px;
+  font-size: 14px;
+  font-weight: 400;
+  text-decoration: none;
+  transition: all 0.2s;
+  cursor: none;
+  display: inline-block;
+}
+
+.btn-outline-white:hover { border-color: #fff; background: rgba(255,255,255,0.08); }
+
+/* FOOTER */
+footer {
+  background: var(--ink);
+  padding: 60px 48px 40px;
+}
+
+.footer-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.footer-top {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 60px;
+  padding-bottom: 48px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  margin-bottom: 32px;
+}
+
+.footer-brand {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 12px;
+}
+
+.footer-brand span { color: var(--terra); }
+
+.footer-desc {
+  font-size: 13px;
+  color: rgba(255,255,255,0.35);
+  line-height: 1.7;
+  font-weight: 300;
+  max-width: 240px;
+}
+
+.footer-col-title {
+  font-size: 10px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--gold);
+  font-weight: 500;
+  margin-bottom: 20px;
+}
+
+.footer-links { list-style: none; }
+
+.footer-links li {
+  margin-bottom: 10px;
+}
+
+.footer-links a {
+  font-size: 13px;
+  color: rgba(255,255,255,0.4);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footer-links a:hover { color: rgba(255,255,255,0.8); }
+
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer-copy { font-size: 12px; color: rgba(255,255,255,0.2); }
+.footer-pk {
+  font-size: 12px;
+  color: rgba(255,255,255,0.2);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* FLOATING WA */
+.wa-float {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  z-index: 50;
+  background: #25D366;
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  text-decoration: none;
+  box-shadow: 0 4px 20px rgba(37,211,102,0.4);
+  transition: transform 0.2s;
+  animation: pulse 2s infinite;
+}
+
+.wa-float:hover { transform: scale(1.1); }
+
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 4px 20px rgba(37,211,102,0.4); }
+  50% { box-shadow: 0 4px 40px rgba(37,211,102,0.6); }
+}
+
+/* ANIMATIONS */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeLeft {
+  from { opacity: 0; transform: translateX(30px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+  /* NAV */
+  nav { padding: 20px 24px; }
+  nav.scrolled { padding: 14px 24px; }
+  .nav-links { display: none; }
+
+  /* HERO */
+  .hero { padding: 100px 20px 56px; }
+  .hero-content { grid-template-columns: 1fr; gap: 32px; }
+  .hero-card { display: none; }
+  .hero-headline { letter-spacing: -1px; }
+  .hero-actions { flex-direction: column; align-items: flex-start; gap: 20px; }
+  .hero-stats { gap: 16px; }
+  .hero-stat { min-width: 100px; padding-right: 16px; margin-right: 16px; }
+
+  /* STATS */
+  .stats-bar { grid-template-columns: repeat(2,1fr); padding: 28px 20px; gap: 0; }
+  .stat-item { padding: 12px 16px; }
+  .stat-number { font-size: 36px; }
+
+  /* GLOBAL SECTION */
+  section { padding: 64px 20px; }
+
+  /* HOW IT WORKS */
+  .how-grid { grid-template-columns: 1fr; gap: 40px; }
+  .how-visual { min-height: 240px; padding: 28px; }
+  .how-visual-headline { font-size: 24px; }
+  .how-step { gap: 16px; }
+  .step-num-big { font-size: 40px; min-width: 40px; }
+
+  /* PACKAGES */
+  .pkg-intro { grid-template-columns: 1fr; gap: 16px; }
+  .pkg-grid { grid-template-columns: 1fr; }
+  .pkg-header { padding: 24px 20px 18px; }
+  .pkg-body { padding: 18px 20px; }
+  .pkg-footer { padding: 0 20px 20px; }
+  .pkg-sizes { flex-wrap: wrap; }
+  .pkg-size-btn { font-size: 11px; padding: 6px 10px; }
+
+  /* GALLERY */
+  #galleryGrid { grid-template-columns: 1fr !important; }
+  .gallery-card { }
+
+  /* TESTIMONIALS */
+  #testimonialsGrid, [id*="testimonial"] { }
+  section[style*="background:var(--ink)"] > div > div[style*="grid-template-columns:repeat(3"] {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+  }
+
+  /* CALCULATOR */
+  section[style*="calculator"] > div,
+  div[style*="gap:80px; align-items:start"] {
+    display: block !important;
+  }
+
+  /* WHY */
+  .why-grid { grid-template-columns: 1fr; gap: 0; }
+  .why-card { padding: 28px 20px; }
+
+  /* FAQ */
+  .faq-layout { grid-template-columns: 1fr; gap: 32px; }
+  .faq-q-text { font-size: 16px; }
+
+  /* CTA */
+  .cta-section { padding: 72px 20px; }
+  .cta-section::before { font-size: 80px; }
+  .cta-actions { flex-direction: column; align-items: center; }
+  .btn-white, .btn-outline-white { width: 100%; text-align: center; }
+
+  /* FOOTER */
+  .footer-top { grid-template-columns: 1fr; gap: 32px; }
+  .footer-bottom { flex-direction: column; gap: 8px; }
+  footer { padding: 48px 20px 32px; }
+
+  /* MODAL */
+  #swapModal > div { padding: 36px 24px !important; }
+  #swapModal > div > div[style*="grid-template-columns:repeat(3"] {
+    grid-template-columns: repeat(3,1fr) !important;
+    gap: 8px !important;
+  }
+
+  /* FLOATING BUTTON */
+  .wa-float { width: 48px; height: 48px; font-size: 22px; bottom: 20px; right: 20px; }
+
+  /* CUSTOM CURSOR OFF */
+  body { cursor: auto; }
+  .cursor, .cursor-follower { display: none; }
+}
+
+/* ── Global UX Fixes ─────────────────────────────────────── */
+
+/* Minimum font size — nothing important under 14px */
+.section-tag, .eyebrow-text, .pkg-tier, .tier-eco, .tier-std, .tier-prm,
+.card-label, .how-visual-label, .timeline-week, .footer-col-title,
+.label-sm, .badge, .cat-filter { font-size: 12px !important; }
+
+/* Minimum tap targets — all interactive elements */
+.pkg-size-btn, .cat-filter, .faq-toggle, .pkg-btn,
+.btn-primary, .btn-ghost, .btn-white, .btn-outline-white,
+.faq-wa-btn, .pkg-show-more { min-height: 44px; }
+
+.pkg-size-btn, .cat-filter { min-width: 44px; display: inline-flex; align-items: center; justify-content: center; }
+
+.faq-question { min-height: 56px; }
+
+/* Nav links larger tap targets */
+.nav-links a { padding: 8px 4px; }
+
+/* Mobile menu close text */
+.mobile-menu-close-hint {
+  position: absolute;
+  top: 32px; right: 28px;
+  font-size: 13px; color: var(--muted);
+  font-weight: 500; letter-spacing: 1px;
+}
+
+/* Scroll progress higher contrast */
+.scroll-progress {
+  height: 3px;
+  background: linear-gradient(90deg, var(--terra), var(--gold));
+  box-shadow: 0 1px 4px rgba(196,92,42,0.4);
+}
+
+/* Calculator reset button */
+.calc-reset {
+  background: none; border: none; font-size: 12px;
+  color: var(--muted); cursor: pointer; text-decoration: underline;
+  font-family: 'DM Sans', sans-serif; margin-top: 8px;
+  padding: 4px 0; display: block; width: 100%; text-align: center;
+  transition: color 0.2s;
+}
+.calc-reset:hover { color: var(--terra); }
+
+/* WhatsApp number in footer */
+.footer-wa-number {
+  display: flex; align-items: center; gap: 8px;
+  margin-top: 16px; padding: 12px 16px;
+  background: rgba(37,211,102,0.08);
+  border-radius: 4px; border: 1px solid rgba(37,211,102,0.2);
+}
+.footer-wa-number span { font-size: 15px; color: rgba(255,255,255,0.7); font-weight: 500; letter-spacing: 0.5px; }
+
+/* Gallery coming soon state */
+.gallery-coming-soon {
+  background: var(--cream-dark); border-radius: 4px; padding: 60px 40px;
+  text-align: center; border: 2px dashed var(--border); grid-column: 1 / -1;
+}
+
+@media (max-width: 768px) {
+  .back-to-top { bottom: 88px; right: 20px; }
+  .wa-float { bottom: 20px; right: 20px; }
+}
+</style>
+
+<style>
+/* ── Mobile Bug Fixes ───────────────────────────────────── */
+
+/* Fix 1: cursor:none breaks tap on iOS/Android */
+@media (hover: none), (pointer: coarse) {
+  * { cursor: auto !important; }
+  .cursor, .cursor-follower { display: none !important; }
+}
+
+/* Fix 2: Prevent full page horizontal scroll */
+html, body { overflow-x: hidden; max-width: 100%; }
+
+/* Fix 3: Calculator overflows on small screens */
+@media (max-width: 480px) {
+  #calcCondBtns + div { display: none; }
+  #calcPropBtns { flex-direction: column !important; }
+  #calcPropBtns button { width: 100% !important; }
+}
+
+/* Fix 4: Hero stats overflow on tiny screens */
+@media (max-width: 360px) {
+  .hero-stats { flex-direction: column; gap: 12px; }
+  .hero-stat { border-right: none !important; padding-right: 0 !important; margin-right: 0 !important; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 12px; }
+  .hero-stat:last-child { border-bottom: none; }
+}
+
+/* Fix 5: Package size buttons wrap cleanly */
+@media (max-width: 480px) {
+  .pkg-sizes { flex-wrap: wrap; gap: 6px; }
+  .pkg-size-btn { flex: 1; min-width: 56px; font-size: 12px !important; }
+}
+
+/* Fix 6: Catalogue filters scroll horizontally instead of wrapping ugly */
+@media (max-width: 600px) {
+  #roomFilters, #tierFilters {
+    overflow-x: auto; flex-wrap: nowrap !important;
+    padding-bottom: 6px; -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; gap: 6px !important;
+  }
+  #roomFilters::-webkit-scrollbar, #tierFilters::-webkit-scrollbar { display: none; }
+  .cat-filter { flex-shrink: 0; padding: 8px 12px !important; }
+}
+
+/* Fix 7: Stats bar on small screens */
+@media (max-width: 480px) {
+  .stats-bar { padding: 20px 16px; }
+  .stat-item { padding: 10px 8px; }
+  .stat-number { font-size: 28px; }
+  .stat-label { font-size: 10px; }
+}
+
+/* Fix 8: Why section mobile padding */
+@media (max-width: 480px) {
+  .why-card { padding: 24px 16px; }
+}
+
+/* Fix 9: How-it-works tags on mobile */
+@media (max-width: 480px) {
+  .how-visual { padding: 24px 20px !important; }
+  .how-visual-headline { font-size: 20px !important; }
+  .how-tags { gap: 6px; }
+  .how-tag { font-size: 12px !important; padding: 6px 10px !important; }
+}
+
+/* Fix 10: Remove mouse hover effects on touch devices */
+@media (hover: none) {
+  .pkg-card:hover { transform: none; box-shadow: none; }
+  .cat-card:hover { transform: none; box-shadow: none; }
+  .logo-cell:hover { filter: none; }
+  .how-step { opacity: 1 !important; transform: none !important; }
+  .how-visual { opacity: 1 !important; transform: none !important; }
+  .pkg-card { opacity: 1 !important; transform: none !important; }
+  .faq-item { opacity: 1 !important; transform: none !important; }
+}
+
+/* Fix 11: Modal on very small screens */
+@media (max-width: 380px) {
+  #swapModal > div { padding: 24px 14px !important; }
+  #swapModal button[onclick*="startSwap"] { padding: 14px 4px !important; font-size: 16px !important; }
+}
+
+/* Fix 12: Section padding on tiny phones */
+@media (max-width: 360px) {
+  section, .section-inner, .wrap { padding-left: 16px !important; padding-right: 16px !important; }
+  nav { padding-left: 16px !important; padding-right: 16px !important; }
+  footer { padding-left: 16px !important; padding-right: 16px !important; }
+}
+
+/* Fix 13: Catalogue header grid stacks on mobile */
+@media (max-width: 600px) {
+  #catalogue > div > div:first-of-type { 
+    grid-template-columns: 1fr !important; 
+    gap: 8px !important;
+  }
+  #catalogue > div > div:first-of-type > div:last-child { text-align: left !important; }
+}
+</style>
+
+<style>
+@media (max-width: 380px) {
+  .hero-headline { font-size: 40px; }
+  h2 { font-size: 30px; }
+  .stat-number { font-size: 28px; }
+  .pkg-size-btn { font-size: 10px; padding: 5px 8px; }
+  #swapModal > div { padding: 28px 16px !important; }
+}
+
+/* ── Hamburger Menu ─────────────────────────────────── */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  z-index: 201;
+}
+
+.hamburger span {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: var(--ink);
+  border-radius: 2px;
+  transition: all 0.3s ease;
+  transform-origin: center;
+}
+
+.hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+.mobile-menu {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: var(--cream);
+  z-index: 200;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.mobile-menu.open {
+  display: flex;
+  opacity: 1;
+}
+
+/* Nav links only — NOT the brand */
+.mobile-menu-links a {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--ink);
+  text-decoration: none;
+  padding: 14px 40px;
+  width: 100%;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+  transition: color 0.2s, background 0.2s;
+  display: block;
+}
+
+.mobile-menu-links a:first-child { border-top: 1px solid var(--border); }
+.mobile-menu-links a:hover { color: var(--terra); background: rgba(196,92,42,0.04); }
+
+.mobile-menu-cta {
+  margin-top: 24px !important;
+  border: none !important;
+  background: var(--terra) !important;
+  color: #fff !important;
+  border-radius: 2px;
+  font-size: 16px !important;
+  font-family: 'DM Sans', sans-serif !important;
+  font-weight: 500 !important;
+  padding: 14px 40px !important;
+  width: auto !important;
+  border-top: none !important;
+}
+
+.mobile-menu-cta:hover { opacity: 0.88 !important; background: var(--terra) !important; color: #fff !important; }
+
+.mobile-menu-brand {
+  position: absolute;
+  top: 24px;
+  left: 28px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--ink);
+  text-decoration: none;
+  /* Override any inherited link styles */
+  padding: 0 !important;
+  width: auto !important;
+  text-align: left !important;
+  border: none !important;
+  background: none !important;
+}
+
+.mobile-menu-brand span { color: var(--terra); }
+
+@media (max-width: 768px) {
+  .hamburger { display: flex; }
+  nav.scrolled .hamburger span { background: var(--ink); }
+}
+
+/* ── Back to Top ─────────────────────────────────────── */
+.back-to-top {
+  position: fixed;
+  bottom: 100px;
+  right: 28px;
+  width: 44px;
+  height: 44px;
+  background: var(--ink);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  font-size: 18px;
+  cursor: pointer;
+  z-index: 49;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: translateY(16px);
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 16px rgba(28,20,16,0.2);
+}
+
+.back-to-top.visible { opacity: 1; transform: translateY(0); }
+.back-to-top:hover { background: var(--terra); }
+
+/* ── Scroll Progress Bar ─────────────────────────────── */
+.scroll-progress {
+  position: fixed;
+  top: 0; left: 0;
+  height: 3px;
+  width: 0%;
+  background: linear-gradient(90deg, var(--terra), var(--gold));
+  z-index: 999;
+  transition: width 0.1s linear;
+}
+
+/* ── Mobile font size improvements ──────────────────── */
+@media (max-width: 768px) {
+  .faq-q-text { font-size: 18px; }
+  .footer-links a { font-size: 15px; min-height: 44px; display: flex; align-items: center; }
+  .pkg-size-btn { min-height: 44px; min-width: 44px; font-size: 13px; }
+  .pkg-features li { font-size: 14px; padding: 10px 0; }
+  .how-tag { font-size: 13px; padding: 8px 16px; }
+  .why-text { font-size: 14px; }
+  .step-text { font-size: 14px; }
+  .faq-contact-text { font-size: 14px; }
+  .ad-body-text { font-size: 14px; }
+  .section-tag { font-size: 11px; }
+  .pkg-tier { font-size: 11px; }
+}
+
+/* ── Package list collapse on mobile ─────────────────── */
+@media (max-width: 768px) {
+  .pkg-features-extra { display: none; }
+  .pkg-show-more {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--terra);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    padding: 10px 0;
+    margin-top: 4px;
+  }
+}
+
+@media (min-width: 769px) {
+  .pkg-show-more { display: none; }
+  .pkg-features-extra { display: block; }
+}
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-follower" id="follower"></div>
+
+<!-- SCROLL PROGRESS -->
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<!-- BACK TO TOP -->
+<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top">↑</button>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#" class="mobile-menu-brand">Furni<span>Swap</span></a>
+  <div class="mobile-menu-close-hint">tap ✕ to close</div>
+  <div class="mobile-menu-links">
+    <a href="#how" onclick="closeMobileMenu()">How It Works</a>
+    <a href="#packages" onclick="closeMobileMenu()">Packages</a>
+    <a href="furniswap-catalogue.html" onclick="closeMobileMenu()">Catalogue</a>
+    <a href="furniswap-calculator.html" onclick="closeMobileMenu()">Calculator</a>
+    <a href="#why" onclick="closeMobileMenu()">Why Us</a>
+    <a href="#faq" onclick="closeMobileMenu()">FAQ</a>
+    <a href="#contact" onclick="closeMobileMenu()" class="mobile-menu-cta">Get Started →</a>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav id="navbar">
+  <a href="#" class="nav-brand">Furni<span>Swap</span></a>
+  <ul class="nav-links">
+    <li><a href="#how">How It Works</a></li>
+    <li><a href="#packages">Packages</a></li>
+    
+    
+    <li><a href="#why">Why Us</a></li>
+    <li><a href="#faq">FAQ</a></li>
+    <li><a href="#contact" class="nav-cta">Get Started</a></li>
+  </ul>
+  <button class="hamburger" id="hamburger" onclick="toggleMobileMenu()" aria-label="Toggle menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-bg">
+    <div class="hero-circle hero-circle-1"></div>
+    <div class="hero-circle hero-circle-2"></div>
+    <div class="hero-grain"></div>
+  </div>
+  <div class="hero-content">
+    <div class="hero-left">
+      <div class="hero-eyebrow">
+        <div class="eyebrow-dot"></div>
+        <span class="eyebrow-text">Pakistan's First Furniture Swap Platform</span>
+      </div>
+      <h1 class="hero-headline">
+        New home.<br>
+        <em>Zero hassle.</em><br>
+        <span class="line-forest">We handle it all.</span>
+      </h1>
+      <p class="hero-sub">Hand us your old furniture. Walk into a brand new, fully installed home setup — for just the difference in price. Islamabad & Rawalpindi.</p>
+      <div class="hero-actions">
+        <a href="https://wa.me/923437761250" class="btn-primary" onclick="openModal(); return false;">Start Your Swap →</a>
+        <a href="#how" class="btn-ghost"><span>See how it works</span><span class="arrow">↓</span></a>
+      </div>
+    </div>
+    <div class="hero-card">
+      <div class="card-label">How FurniSwap Works</div>
+      <ul class="card-steps">
+        <li class="card-step">
+          <div class="step-icon terra">📸</div>
+          <div class="step-content">
+            <div class="step-title">Share your furniture</div>
+            <div class="step-desc">Send us photos. We assess the swap value for free.</div>
+          </div>
+        </li>
+        <li class="card-step">
+          <div class="step-icon forest">🛋️</div>
+          <div class="step-content">
+            <div class="step-title">Pick your package</div>
+            <div class="step-desc">1BR, 2BR, or 3BR — Economy, Standard, or Premium.</div>
+          </div>
+        </li>
+        <li class="card-step">
+          <div class="step-icon gold">🚚</div>
+          <div class="step-content">
+            <div class="step-title">We deliver & install</div>
+            <div class="step-desc">Full setup done within 3–5 working days.</div>
+          </div>
+        </li>
+        <li class="card-step">
+          <div class="step-icon blue">✅</div>
+          <div class="step-content">
+            <div class="step-title">We collect the old</div>
+            <div class="step-desc">No OLX. No strangers. We take it away ourselves.</div>
+          </div>
+        </li>
+      </ul>
+      <div class="hero-card-footer">
+        <span class="footer-text">Free assessment. No commitment.</span>
+        <span class="footer-badge">Islamabad ✓</span>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stat-item">
+    <span class="stat-number" data-target="1">1st</span>
+    <span class="stat-label">In Pakistan</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-number">3–5</span>
+    <span class="stat-label">Days delivery</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-number">9</span>
+    <span class="stat-label">Packages available</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-number">Rs. 0</span>
+    <span class="stat-label">Hidden charges</span>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section class="how-section" id="how">
+  <div class="section-inner">
+    <div class="section-eyebrow">
+      <span class="section-tag">The Process</span>
+      <div class="section-line"></div>
+    </div>
+    <h2>Simpler than you <em>think</em></h2>
+    <div class="how-grid">
+      <div class="how-steps">
+        <div class="how-step">
+          <div class="step-num-big">01</div>
+          <div class="step-body">
+            <div class="step-name">Send us photos of your old furniture</div>
+            <div class="step-text">WhatsApp us pictures of what you have. We assess the condition and give you a swap value — completely free, no commitment required.</div>
+          </div>
+        </div>
+        <div class="how-step">
+          <div class="step-num-big">02</div>
+          <div class="step-body">
+            <div class="step-name">Pick your new complete package</div>
+            <div class="step-text">Choose from 1, 2 or 3 bedroom packages across Economy, Standard and Premium tiers. Everything included — sofa, beds, dining, wardrobes and more.</div>
+          </div>
+        </div>
+        <div class="how-step">
+          <div class="step-num-big">03</div>
+          <div class="step-body">
+            <div class="step-name">Pay only the difference</div>
+            <div class="step-text">Your old furniture value is deducted from the package price. You pay only what's left — a fraction of buying everything new from scratch.</div>
+          </div>
+        </div>
+        <div class="how-step">
+          <div class="step-num-big">04</div>
+          <div class="step-body">
+            <div class="step-name">We do everything else</div>
+            <div class="step-text">Delivery, installation, and collection of your old furniture — all handled by our team. You just enjoy your brand new home.</div>
+          </div>
+        </div>
+      </div>
+      <div class="how-visual">
+        <div class="how-visual-label">What's Included</div>
+        <div class="how-visual-headline">Every package covers your entire home</div>
+        <div class="how-tags">
+          <span class="how-tag">Sofa Set</span>
+          <span class="how-tag">Bed Frame</span>
+          
+          <span class="how-tag">Wardrobe</span>
+          <span class="how-tag">Dining Table</span>
+          <span class="how-tag">Chairs</span>
+          <span class="how-tag">Side Tables</span>
+          <span class="how-tag">Delivery</span>
+          <span class="how-tag">Installation</span>
+          <span class="how-tag">Old Collection</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PACKAGES -->
+<section class="pkg-section" id="packages">
+  <div class="section-inner">
+    <div class="pkg-intro">
+      <div>
+        <div class="section-eyebrow">
+          <span class="section-tag">Packages</span>
+          <div class="section-line"></div>
+        </div>
+        <h2>Find your perfect <em>fit</em></h2>
+      </div>
+      <p class="pkg-sub">All prices shown are full package values. After we deduct your old furniture's swap value, you pay significantly less. Get a free assessment to know exactly what you'll pay.</p>
+    </div>
+    <!-- TYPE SWITCHER -->
+    <div style="display:flex; align-items:center; gap:0; margin-bottom:40px; background:var(--cream-dark); border-radius:4px; padding:5px; width:fit-content;">
+      <button id="tabApt" onclick="switchType('apartment')" style="padding:12px 32px; border:none; border-radius:3px; font-family:'DM Sans',sans-serif; font-size:14px; font-weight:500; cursor:pointer; transition:all 0.25s; background:var(--ink); color:#fff;">🏢 Apartment</button>
+      <button id="tabHouse" onclick="switchType('house')" style="padding:12px 32px; border:none; border-radius:3px; font-family:'DM Sans',sans-serif; font-size:14px; font-weight:500; cursor:pointer; transition:all 0.25s; background:transparent; color:var(--muted);">🏠 House</button>
+    </div>
+
+    <div class="pkg-grid">
+
+      <!-- ECONOMY -->
+      <div class="pkg-card" data-tier="economy">
+        <div class="pkg-header">
+          <div class="pkg-tier tier-eco">Economy</div>
+          <div class="pkg-name">Essential Home</div>
+          <div class="pkg-price-row">
+            <div class="pkg-price" id="price-economy">Rs. 3,80,000</div>
+          </div>
+          <div class="pkg-price-note" style="margin-top:6px; font-size:12px; color:var(--muted);">After swap credit — you pay less</div>
+          <div class="pkg-sizes" data-tier="economy">
+            <button class="pkg-size-btn active" data-size="1">1BR</button>
+            <button class="pkg-size-btn" data-size="2">2BR</button>
+            <button class="pkg-size-btn" data-size="3">3BR</button>
+          </div>
+        </div>
+        <div class="pkg-body">
+          <ul class="pkg-features">
+            <li><span class="feat-check check-forest">✓</span> Complete sofa set</li>
+            <li><span class="feat-check check-forest">✓</span> Bed frame</li>
+            <li><span class="feat-check check-forest">✓</span> Wardrobe</li>
+            <li><span class="feat-check check-forest">✓</span> Dining table + 4 chairs</li>
+            <li><span class="feat-check check-forest">✓</span> Free delivery & installation</li>
+            <li><span class="feat-check check-forest">✓</span> Old furniture collected</li>
+          </ul>
+        </div>
+        <div class="pkg-footer">
+          <a href="https://wa.me/923437761250" class="pkg-btn pkg-btn-outline">Get Free Assessment</a>
+        </div>
+      </div>
+
+      <!-- STANDARD -->
+      <div class="pkg-card featured" data-tier="standard">
+        <div class="pkg-featured-badge">Most Popular</div>
+        <div class="pkg-header">
+          <div class="pkg-tier tier-std">Standard</div>
+          <div class="pkg-name">Complete Home</div>
+          <div class="pkg-price-row">
+            <div class="pkg-price" id="price-standard">Rs. 7,50,000</div>
+          </div>
+          <div class="pkg-price-note" style="margin-top:6px; font-size:12px; color:var(--muted);">After swap credit — you pay less</div>
+          <div class="pkg-sizes" data-tier="standard">
+            <button class="pkg-size-btn active" data-size="1">1BR</button>
+            <button class="pkg-size-btn" data-size="2">2BR</button>
+            <button class="pkg-size-btn" data-size="3">3BR</button>
+          </div>
+        </div>
+        <div class="pkg-body">
+          <ul class="pkg-features">
+            <li><span class="feat-check check-terra">✓</span> Premium brand furniture</li>
+            <li><span class="feat-check check-terra">✓</span> Better finishes & fabrics</li>
+            <li><span class="feat-check check-terra">✓</span> Full bedroom set</li>
+            <li><span class="feat-check check-terra">✓</span> Dining + living complete</li>
+            <li><span class="feat-check check-terra">✓</span> Side & coffee tables</li>
+            <li><span class="feat-check check-terra">✓</span> Free delivery & installation</li>
+            <li><span class="feat-check check-terra">✓</span> Old furniture collected</li>
+          </ul>
+        </div>
+        <div class="pkg-footer">
+          <a href="https://wa.me/923437761250" class="pkg-btn pkg-btn-fill">Get Free Assessment</a>
+        </div>
+      </div>
+
+      <!-- PREMIUM -->
+      <div class="pkg-card" data-tier="premium">
+        <div class="pkg-header">
+          <div class="pkg-tier tier-prm">Premium</div>
+          <div class="pkg-name">Luxury Home</div>
+          <div class="pkg-price-row">
+            <div class="pkg-price" id="price-premium">Rs. 12,00,000</div>
+          </div>
+          <div class="pkg-price-note" style="margin-top:6px; font-size:12px; color:var(--muted);">After swap credit — you pay less</div>
+          <div class="pkg-sizes" data-tier="premium">
+            <button class="pkg-size-btn active" data-size="1">1BR</button>
+            <button class="pkg-size-btn" data-size="2">2BR</button>
+            <button class="pkg-size-btn" data-size="3">3BR</button>
+          </div>
+        </div>
+        <div class="pkg-body">
+          <ul class="pkg-features">
+            <li><span class="feat-check check-gold">✓</span> High-end designer pieces</li>
+            <li><span class="feat-check check-gold">✓</span> Full décor & accessories</li>
+            <li><span class="feat-check check-gold">✓</span> Free interior design</li>
+            <li><span class="feat-check check-gold">✓</span> Luxury bed linen included</li>
+            <li><span class="feat-check check-gold">✓</span> Complete kitchen fittings</li>
+            <li><span class="feat-check check-gold">✓</span> Priority delivery</li>
+            <li><span class="feat-check check-gold">✓</span> Old furniture collected</li>
+          </ul>
+        </div>
+        <div class="pkg-footer">
+          <a href="https://wa.me/923437761250" class="pkg-btn pkg-btn-outline">Get Free Assessment</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY + TESTIMONIALS -->
+<section class="why-section" id="why">
+  <div class="section-inner">
+    <div class="section-eyebrow">
+      <span class="section-tag">Why FurniSwap</span>
+      <div class="section-line"></div>
+    </div>
+    <h2>No OLX. No strangers.<br>No <em>stress.</em></h2>
+    <div class="why-grid">
+      <div class="why-card">
+        <span class="why-icon">🔄</span>
+        <div class="why-title">True Swap</div>
+        <div class="why-text">We actually take your old furniture and bring you new. Real exchange, real value deducted from your price.</div>
+      </div>
+      <div class="why-card">
+        <span class="why-icon">📦</span>
+        <div class="why-title">Everything in One Go</div>
+        <div class="why-text">Delivery, installation, old furniture removal — all on the same day. No multiple vendors, no second trips.</div>
+      </div>
+      <div class="why-card">
+        <span class="why-icon">🎨</span>
+        <div class="why-title">Free Interior Design</div>
+        <div class="why-text">Selected packages include free interior design. We help you create a home that looks and feels right.</div>
+      </div>
+      <div class="why-card">
+        <span class="why-icon">💬</span>
+        <div class="why-title">WhatsApp-First</div>
+        <div class="why-text">No complicated forms. Assessment, questions, booking, updates — all in one WhatsApp conversation.</div>
+      </div>
+      <div class="why-card">
+        <span class="why-icon">✅</span>
+        <div class="why-title">Zero Pressure</div>
+        <div class="why-text">Free assessment. If you don't love what we offer, walk away. No deposit, no hard sell, ever.</div>
+      </div>
+      <div class="why-card">
+        <span class="why-icon">🏙️</span>
+        <div class="why-title">Built for Islamabad</div>
+        <div class="why-text">We know DHA, Bahria, F-sectors. Local team, fast turnaround, pricing that makes sense for this market.</div>
+      </div>
+    </div>
+
+    <!-- EMBEDDED TESTIMONIALS -->
+    <div style="margin-top:56px; padding-top:48px; border-top:1px solid rgba(255,255,255,0.08);">
+      <div style="font-size:10px; letter-spacing:3px; text-transform:uppercase; color:var(--gold); font-weight:600; margin-bottom:28px; text-align:center;">What Our Customers Say</div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+
+        <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.07); border-radius:4px; padding:28px 24px;">
+          <div style="font-family:'Cormorant Garamond',serif; font-size:26px; color:var(--gold); margin-bottom:12px;">"</div>
+          <div style="font-size:14px; color:rgba(255,255,255,0.8); line-height:1.75; font-weight:300; margin-bottom:20px; font-family:'Cormorant Garamond',serif; font-style:italic;">Maine sofa OLX pe 3 hafte pehle dala tha — koi buyer nahi aaya. FurniSwap ne 2 din mein poora ghar badal diya.</div>
+          <div style="display:flex; align-items:center; gap:12px;">
+            <div style="width:38px; height:38px; border-radius:50%; background:linear-gradient(135deg,var(--terra),var(--gold)); display:flex; align-items:center; justify-content:center; font-weight:700; color:#fff; flex-shrink:0;">A</div>
+            <div>
+              <div style="font-size:13px; font-weight:500; color:#fff;">Ahmed R.</div>
+              <div style="font-size:11px; color:rgba(255,255,255,0.35);">2BR Economy · F-8 · Feb 2025</div>
+            </div>
+            <div style="margin-left:auto; color:var(--gold); font-size:13px;">★★★★★</div>
+          </div>
+        </div>
+
+        <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.07); border-radius:4px; padding:28px 24px;">
+          <div style="font-family:'Cormorant Garamond',serif; font-size:26px; color:var(--gold); margin-bottom:12px;">"</div>
+          <div style="font-size:14px; color:rgba(255,255,255,0.8); line-height:1.75; font-weight:300; margin-bottom:20px; font-family:'Cormorant Garamond',serif; font-style:italic;">Naya ghar liya tha aur budget tight tha. FurniSwap ke swap value ne bahut help ki. Poora setup mil gaya.</div>
+          <div style="display:flex; align-items:center; gap:12px;">
+            <div style="width:38px; height:38px; border-radius:50%; background:linear-gradient(135deg,var(--forest),var(--forest-light)); display:flex; align-items:center; justify-content:center; font-weight:700; color:#fff; flex-shrink:0;">S</div>
+            <div>
+              <div style="font-size:13px; font-weight:500; color:#fff;">Sara M.</div>
+              <div style="font-size:11px; color:rgba(255,255,255,0.35);">2BR Standard · DHA Ph.2 · Jan 2025</div>
+            </div>
+            <div style="margin-left:auto; color:var(--gold); font-size:13px;">★★★★★</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</section>
+<!-- FAQ -->
+<section class="faq-section" id="faq">
+  <div class="section-inner">
+    <div class="faq-layout">
+      <div class="faq-left">
+        <div class="section-eyebrow">
+          <span class="section-tag">FAQ</span>
+          <div class="section-line"></div>
+        </div>
+        <h2>Questions <em>answered</em></h2>
+        <p>Still unsure? We've answered the most common questions below. Or just WhatsApp us — we respond fast.</p>
+        <div class="faq-contact-card">
+          <div class="faq-contact-label">Prefer to talk?</div>
+          <div class="faq-contact-text">Our team typically replies within 30 minutes on WhatsApp during business hours.</div>
+          <a href="https://wa.me/923437761250" class="faq-wa-btn">💬 WhatsApp Us Now</a>
+        </div>
+      </div>
+      <div class="faq-list" id="faqList">
+        <div class="faq-item">
+          <div class="faq-question" onclick="toggleFaq(this)">
+            <span class="faq-q-text">What condition does my old furniture need to be in?</span>
+            <button class="faq-toggle" aria-label="Toggle answer">+</button>
+          </div>
+          <div class="faq-answer">We accept furniture in most conditions — from good to heavily used. The condition determines the swap value we offer. Even older or worn pieces have value. We'll give you an honest assessment for free with no pressure to proceed.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question" onclick="toggleFaq(this)">
+            <span class="faq-q-text">Do I need to pay anything upfront?</span>
+            <button class="faq-toggle" aria-label="Toggle answer">+</button>
+          </div>
+          <div class="faq-answer">No. The assessment is completely free. You only pay when you decide to proceed with a package. At that point you pay the difference between the new package price and your old furniture's swap value.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question" onclick="toggleFaq(this)">
+            <span class="faq-q-text">How long does delivery and installation take?</span>
+            <button class="faq-toggle" aria-label="Toggle answer">+</button>
+          </div>
+          <div class="faq-answer">We deliver and install within 3 to 5 working days of confirming your order. Premium packages may have priority delivery. Our team handles full installation — you don't need to arrange anything separately.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question" onclick="toggleFaq(this)">
+            <span class="faq-q-text">Which areas do you currently serve?</span>
+            <button class="faq-toggle" aria-label="Toggle answer">+</button>
+          </div>
+          <div class="faq-answer">We currently serve Islamabad and Rawalpindi — including DHA, Bahria Town, F-sectors, E-sectors, and G-sectors. WhatsApp us your area if you're unsure whether we cover your location.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question" onclick="toggleFaq(this)">
+            <span class="faq-q-text">What if I only want to swap some furniture, not everything?</span>
+            <button class="faq-toggle" aria-label="Toggle answer">+</button>
+          </div>
+          <div class="faq-answer">Our packages are designed as complete room setups for best value. However, get in touch on WhatsApp and we can discuss what works for your specific situation. We're flexible and want to find the right solution for you.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question" onclick="toggleFaq(this)">
+            <span class="faq-q-text">Can I pay in installments?</span>
+            <button class="faq-toggle" aria-label="Toggle answer">+</button>
+          </div>
+          <div class="faq-answer">We are working on installment options with financial partners. WhatsApp us to discuss payment arrangements — we want to make this as accessible as possible and are happy to work with you on flexible terms.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" id="contact">
+  <h2>Ready to transform<br>your home?</h2>
+  <p>Get a free assessment today. No commitment, no pressure. Just a fresh start.</p>
+  <div class="cta-actions">
+    <a href="https://wa.me/923437761250" class="btn-white">💬 WhatsApp Us Now</a>
+    <a href="#packages" class="btn-outline-white">Browse Packages</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div>
+        <div class="footer-brand">Furni<span>Swap</span></div>
+        <div class="footer-desc">Pakistan's first furniture swapping platform. Making home upgrades smarter, simpler and more affordable.</div>
+        <div class="footer-wa-number">
+          <span>💬</span>
+          <span>0343 7761250</span>
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-title">Quick Links</div>
+        <ul class="footer-links">
+          <li><a href="#how">How It Works</a></li>
+          <li><a href="#packages">Packages</a></li>
+          <li><a href="#catalogue">Catalogue</a></li>
+          <li><a href="#why">Why FurniSwap</a></li>
+          <li><a href="#faq">FAQ</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Contact</div>
+        <ul class="footer-links">
+          <li><a href="https://wa.me/923437761250">WhatsApp</a></li>
+          <li><a href="#">Instagram</a></li>
+          <li><a href="#">Facebook</a></li>
+          <li><a href="#">Islamabad & Rawalpindi</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">© 2025 FurniSwap. All rights reserved.</span>
+      <span class="footer-pk">🇵🇰 Made in Pakistan</span>
+    </div>
+  </div>
+</footer>
+
+<!-- FLOATING WHATSAPP -->
+<a href="#" class="wa-float" onclick="openModal(); return false;" title="Chat on WhatsApp">💬</a>
+
+<!-- BEDROOM MODAL -->
+<div id="swapModal" style="display:none; position:fixed; inset:0; z-index:200; background:rgba(28,20,16,0.6); backdrop-filter:blur(6px); align-items:center; justify-content:center; padding:24px;">
+  <div style="background:var(--cream); border-radius:6px; max-width:480px; width:100%; padding:48px 40px; position:relative; animation:fadeUp 0.35s ease;">
+    <button onclick="closeModal()" style="position:absolute; top:20px; right:20px; background:none; border:none; font-size:22px; color:var(--muted); cursor:pointer; line-height:1;">×</button>
+    <div style="font-size:10px; letter-spacing:3px; text-transform:uppercase; color:var(--terra); font-weight:500; margin-bottom:14px;">Free Assessment</div>
+    <div style="font-family:'Cormorant Garamond',serif; font-size:30px; font-weight:700; color:var(--ink); line-height:1.2; margin-bottom:10px;">How many bedrooms<br>is your apartment?</div>
+    <div style="font-size:14px; color:var(--muted); margin-bottom:32px; font-weight:300;">We'll open WhatsApp with the right package details ready for you.</div>
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:24px;">
+      <button onclick="startSwap(1)" style="padding:20px 12px; border:1.5px solid var(--border); border-radius:4px; background:#fff; font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:700; color:var(--ink); cursor:pointer; transition:all 0.2s;" onmouseover="this.style.borderColor='var(--terra)';this.style.color='var(--terra)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--ink)'">
+        1BR<div style="font-family:'DM Sans',sans-serif; font-size:11px; color:var(--muted); font-weight:400; margin-top:4px;">1 Bedroom</div>
+      </button>
+      <button onclick="startSwap(2)" style="padding:20px 12px; border:2px solid var(--terra); border-radius:4px; background:rgba(196,92,42,0.04); font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:700; color:var(--terra); cursor:pointer; transition:all 0.2s;" onmouseover="this.style.background='rgba(196,92,42,0.1)'" onmouseout="this.style.background='rgba(196,92,42,0.04)'">
+        2BR<div style="font-family:'DM Sans',sans-serif; font-size:11px; color:var(--terra); font-weight:400; margin-top:4px;">Most Popular</div>
+      </button>
+      <button onclick="startSwap(3)" style="padding:20px 12px; border:1.5px solid var(--border); border-radius:4px; background:#fff; font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:700; color:var(--ink); cursor:pointer; transition:all 0.2s;" onmouseover="this.style.borderColor='var(--terra)';this.style.color='var(--terra)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--ink)'">
+        3BR<div style="font-family:'DM Sans',sans-serif; font-size:11px; color:var(--muted); font-weight:400; margin-top:4px;">3 Bedroom</div>
+      </button>
+    </div>
+    <div style="text-align:center; font-size:12px; color:var(--muted);">✓ Free assessment &nbsp;·&nbsp; No commitment &nbsp;·&nbsp; Reply in 30 mins</div>
+  </div>
+</div>
+
+<script>
+// ── Hamburger Menu ────────────────────────────────────────────
+const navbar = document.getElementById('navbar');
+function toggleMobileMenu() {
+  const menu = document.getElementById('mobileMenu');
+  const hamburger = document.getElementById('hamburger');
+  const isOpen = menu.classList.contains('open');
+  menu.classList.toggle('open', !isOpen);
+  hamburger.classList.toggle('open', !isOpen);
+  document.body.style.overflow = isOpen ? '' : 'hidden';
+}
+
+function closeMobileMenu() {
+  document.getElementById('mobileMenu').classList.remove('open');
+  document.getElementById('hamburger').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// Close menu on Escape
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMobileMenu(); });
+
+// ── Scroll Progress + Back to Top ────────────────────────────
+const progressBar = document.getElementById('scrollProgress');
+const backToTop   = document.getElementById('backToTop');
+
+window.addEventListener('scroll', () => {
+  // Progress bar
+  const scrolled = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+  progressBar.style.width = scrolled + '%';
+
+  // Back to top visibility
+  backToTop.classList.toggle('visible', window.scrollY > 500);
+
+  // Nav scroll
+  navbar.classList.toggle('scrolled', window.scrollY > 60);
+}, { passive: true });
+
+// ── Custom cursor (desktop only) ─────────────────────────────
+const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+if (!isTouchDevice) {
+const cursor = document.getElementById('cursor');
+const follower = document.getElementById('follower');
+let mouseX = 0, mouseY = 0, followerX = 0, followerY = 0;
+
+document.addEventListener('mousemove', e => {
+  mouseX = e.clientX; mouseY = e.clientY;
+  cursor.style.left = mouseX + 'px';
+  cursor.style.top = mouseY + 'px';
+});
+
+function animateFollower() {
+  followerX += (mouseX - followerX) * 0.12;
+  followerY += (mouseY - followerY) * 0.12;
+  follower.style.left = followerX + 'px';
+  follower.style.top = followerY + 'px';
+  requestAnimationFrame(animateFollower);
+}
+animateFollower();
+} // end desktop cursor
+
+// ── Scroll reveal ─────────────────────────────────────────────
+// On touch devices, make all animated elements immediately visible
+if (isTouchDevice) {
+  document.querySelectorAll('.how-step, .pkg-card, .faq-item, .how-visual, .cat-card').forEach(el => {
+    el.classList.add('visible');
+    el.style.opacity = '1';
+    el.style.transform = 'none';
+  });
+} else {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 100);
+      }
+    });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.how-step, .pkg-card, .faq-item, .how-visual').forEach(el => observer.observe(el));
+}
+
+// FAQ
+function toggleFaq(question) {
+  const item = question.parentElement;
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(el => el.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
+
+// ── Swap Value Calculator ──────────────────────────────────────
+const calcPrices = {
+  apartment: {
+    economy:  { '1BR':380000,  '2BR':580000,  '3BR':780000  },
+    standard: { '1BR':750000,  '2BR':1100000, '3BR':1450000 },
+    premium:  { '1BR':1200000, '2BR':1800000, '3BR':2200000 }
+  },
+  house: {
+    economy:  { '5 Marla':850000,  '10 Marla':1300000, '1 Kanal':1900000, '2 Kanal':2800000, '5 Kanal':4800000 },
+    standard: { '5 Marla':1600000, '10 Marla':2400000, '1 Kanal':3500000, '2 Kanal':5000000, '5 Kanal':8500000 },
+    premium:  { '5 Marla':2800000, '10 Marla':4200000, '1 Kanal':6200000, '2 Kanal':9000000, '5 Kanal':15000000 }
+  }
+};
+
+const conditionRate = { good: 0.22, fair: 0.15, poor: 0.08 };
+const aptSizesCalc   = ['1BR','2BR','3BR'];
+const houseSizesCalc = ['5 Marla','10 Marla','1 Kanal','2 Kanal','5 Kanal'];
+
+let calcState = { propType:'apartment', tier:'economy', size:'1BR', condition:'good' };
+
+function calcSelectProp(type, btn) {
+  calcState.propType = type;
+  document.querySelectorAll('#calcPropBtns button').forEach(b => {
+    b.style.background = 'transparent'; b.style.color = 'var(--muted)'; b.style.borderColor = 'var(--border)';
+  });
+  btn.style.background = 'var(--ink)'; btn.style.color = '#fff'; btn.style.borderColor = 'var(--ink)';
+
+  document.getElementById('calcSizeLabel').textContent = type === 'apartment' ? 'Apartment Size' : 'House Size';
+  const sizes = type === 'apartment' ? aptSizesCalc : houseSizesCalc;
+  calcState.size = sizes[0];
+  const sizeBtns = document.getElementById('calcSizeBtns');
+  sizeBtns.style.gridTemplateColumns = type === 'house' ? 'repeat(auto-fit,minmax(72px,1fr))' : 'repeat(3,1fr)';
+  sizeBtns.innerHTML = sizes.map((s,i) =>
+    `<button onclick="calcSelect('size','${s}',this)" style="padding:10px 8px; border:1.5px solid ${i===0?'var(--terra)':'var(--border)'}; border-radius:3px; background:${i===0?'rgba(196,92,42,0.06)':'#fff'}; font-size:${type==='house'?'11px':'12px'}; font-weight:${i===0?'600':'500'}; color:${i===0?'var(--terra)':'var(--muted)'}; cursor:pointer; font-family:'DM Sans',sans-serif; min-height:44px;">${s}</button>`
+  ).join('');
+  updateCalc();
+}
+
+function calcSelect(type, value, btn) {
+  calcState[type] = value;
+  const groupId = type==='tier' ? 'calcTierBtns' : type==='size' ? 'calcSizeBtns' : 'calcCondBtns';
+  document.querySelectorAll(`#${groupId} button`).forEach(b => {
+    b.style.borderColor = 'var(--border)'; b.style.background = '#fff';
+    b.style.color = 'var(--muted)'; b.style.fontWeight = '500';
+  });
+  btn.style.borderColor = 'var(--terra)'; btn.style.background = 'rgba(196,92,42,0.06)';
+  btn.style.color = 'var(--terra)'; btn.style.fontWeight = '600';
+  updateCalc();
+}
+
+function formatPKR(n) {
+  if (n >= 10000000) return 'Rs. ' + (n/10000000).toFixed(1) + ' Cr';
+  if (n >= 100000)   return 'Rs. ' + (n/100000).toFixed(1) + ' Lakh';
+  return 'Rs. ' + n.toLocaleString('en-PK');
+}
+
+function updateCalc() {
+  const prices = calcPrices[calcState.propType][calcState.tier];
+  const pkg    = prices[calcState.size] || Object.values(prices)[0];
+  const credit = Math.round(pkg * conditionRate[calcState.condition]);
+  const pays   = pkg - credit;
+  document.getElementById('resPackage').textContent = formatPKR(pkg);
+  document.getElementById('resCredit').textContent  = '− ' + formatPKR(credit);
+  document.getElementById('resFinal').textContent   = formatPKR(pays);
+  const result = document.getElementById('calcResult');
+  result.style.animation = 'none'; result.offsetHeight;
+  result.style.animation = 'pricePop 0.3s ease';
+}
+
+// Init calculator size buttons on load
+(function() {
+  const sizeBtns = document.getElementById('calcSizeBtns');
+  sizeBtns.innerHTML = aptSizesCalc.map((s,i) =>
+    `<button onclick="calcSelect('size','${s}',this)" style="padding:10px 8px; border:1.5px solid ${i===0?'var(--terra)':'var(--border)'}; border-radius:3px; background:${i===0?'rgba(196,92,42,0.06)':'#fff'}; font-size:12px; font-weight:${i===0?'600':'500'}; color:${i===0?'var(--terra)':'var(--muted)'}; cursor:pointer; font-family:'DM Sans',sans-serif; min-height:44px;">${s}</button>`
+  ).join('');
+  updateCalc();
+})();
+
+// ── Modal ──────────────────────────────────────────────────────
+function openModal() {
+  const modal = document.getElementById('swapModal');
+  modal.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  const modal = document.getElementById('swapModal');
+  modal.style.display = 'none';
+  document.body.style.overflow = '';
+}
+document.getElementById('swapModal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+function startSwap(beds) {
+  const messages = {
+    1: "Hi FurniSwap! 👋 I want to start my free furniture assessment. My apartment is a 1 Bedroom. Please guide me on the next steps.",
+    2: "Hi FurniSwap! 👋 I want to start my free furniture assessment. My apartment is a 2 Bedroom. Please guide me on the next steps.",
+    3: "Hi FurniSwap! 👋 I want to start my free furniture assessment. My apartment is a 3 Bedroom. Please guide me on the next steps."
+  };
+  const url = `https://wa.me/923437761250?text=${encodeURIComponent(messages[beds])}`;
+  window.open(url, '_blank');
+  closeModal();
+}
+document.querySelectorAll('.btn-primary, .pkg-btn, .btn-white, .faq-wa-btn').forEach(btn => {
+  if (btn.href && btn.href.includes('wa.me')) {
+    btn.addEventListener('click', function(e) {
+      e.preventDefault();
+      openModal();
+    });
+  }
+});
+
+// Package pricing and furniture data
+// ── Full package data ──────────────────────────────────────────
+const pkgData = {
+  apartment: {
+    economy: {
+      '1BR': { price:'3,80,000', items:['1 Sofa set (3+2 seater — 5 seat)','1 Bed frame','1 Wardrobe (2 door)','1 Dining table + 4 chairs','Free delivery & installation','Old furniture collected'] },
+      '2BR': { price:'5,80,000', items:['1 Sofa set (3+2+1 seater — 6 seat)','2 Bed frames','2 Wardrobes (2 door each)','1 Dining table + 6 chairs','Free delivery & installation','Old furniture collected'] },
+      '3BR': { price:'7,80,000', items:['1 L-shape sofa (7 seat)','3 Bed frames','3 Wardrobes (2 door each)','1 Dining table + 8 chairs','Free delivery & installation','Old furniture collected'] }
+    },
+    standard: {
+      '1BR': { price:'7,50,000', items:['1 Premium sofa set (3+2 seater — 5 seat)','1 Bed frame','1 Wardrobe (3 door)','1 Dining table + 4 chairs','2 Bedside tables','1 Coffee table','Free delivery & installation','Old furniture collected'] },
+      '2BR': { price:'11,00,000', items:['1 Premium sofa (3+2+1 seater — 6 seat)','2 Bed frames','2 Wardrobes (3 door each)','1 Dining table + 6 chairs','4 Bedside tables','1 Coffee + 2 side tables','Free delivery & installation','Old furniture collected'] },
+      '3BR': { price:'14,50,000', items:['1 Premium L-shape sofa (7 seat)','3 Bed frames','3 Wardrobes (3 door each)','1 Dining table + 8 chairs','6 Bedside tables','1 Coffee + 2 side tables','Free delivery & installation','Old furniture collected'] }
+    },
+    premium: {
+      '1BR': { price:'12,00,000', items:['1 Designer sofa set (3+2 seater — 5 seat)','1 King bed','1 Walk-in wardrobe unit','1 Dining table + 4 chairs','2 Designer bedside tables','Full décor & accessories','Free interior design','Priority delivery & installation','Old furniture collected'] },
+      '2BR': { price:'18,00,000', items:['1 Designer sofa (3+2+1 seater — 6 seat)','1 King + 1 Queen beds','2 Walk-in wardrobe units','1 Dining table + 6 chairs','4 Designer bedside tables','Full décor & accessories','Free interior design','Priority delivery & installation','Old furniture collected'] },
+      '3BR': { price:'22,00,000', items:['1 Designer L-shape sofa (7 seat)','1 King + 2 Queen beds','3 Walk-in wardrobe units','1 Dining table + 8 chairs','6 Designer bedside tables','Full décor & accessories','Free interior design','Priority delivery & installation','Old furniture collected'] }
+    }
+  },
+  house: {
+    economy: {
+      '5 Marla': { price:'8,50,000',  items:['Drawing room: sofa set (3+2 seater — 5 seat)','TV lounge: 3 seater sofa','3 Bed frames','3 Wardrobes (2 door each)','1 Dining table + 6 chairs','Free delivery & installation','Old furniture collected'] },
+      '10 Marla':{ price:'13,00,000', items:['Drawing room: sofa set (3+2+1 seater — 6 seat)','TV lounge: 5 seater sofa','4 Bed frames','4 Wardrobes (2 door each)','1 Dining table + 8 chairs','Free delivery & installation','Old furniture collected'] },
+      '1 Kanal': { price:'19,00,000', items:['Drawing room: L-shape sofa (7 seat)','TV lounge: 3+2 seater sofa (5 seat)','5 Bed frames','5 Wardrobes (2 door each)','1 Dining table + 10 chairs','Free delivery & installation','Old furniture collected'] },
+      '2 Kanal': { price:'28,00,000', items:['Drawing room: L-shape sofa (9 seat)','TV lounge: 3+2+1 seater sofa (6 seat)','6 Bed frames','6 Wardrobes (2 door each)','1 Dining table + 12 chairs','Free delivery & installation','Old furniture collected'] },
+      '5 Kanal': { price:'48,00,000', items:['Drawing room: Full suite sofa (11 seat)','TV lounge: L-shape sofa (7 seat)','7 Bed frames','7 Wardrobes (2 door each)','1 Dining table + 14 chairs','Free delivery & installation','Old furniture collected'] }
+    },
+    standard: {
+      '5 Marla': { price:'16,00,000', items:['Drawing room: Premium sofa (3+2 seater — 5 seat)','TV lounge: Premium 3 seater','3 Bed frames','3 Wardrobes (3 door each)','1 Dining table + 6 chairs','6 Bedside tables','Coffee + side tables','Free delivery & installation','Old furniture collected'] },
+      '10 Marla':{ price:'24,00,000', items:['Drawing room: Premium sofa (3+2+1 seater — 6 seat)','TV lounge: Premium 5 seater','4 Bed frames','4 Wardrobes (3 door each)','1 Dining table + 8 chairs','8 Bedside tables','Coffee + 2 side tables','Free delivery & installation','Old furniture collected'] },
+      '1 Kanal': { price:'35,00,000', items:['Drawing room: Premium L-shape sofa (7 seat)','TV lounge: Premium 3+2 seater (5 seat)','5 Bed frames','5 Wardrobes (3 door each)','1 Dining table + 10 chairs','10 Bedside tables','Coffee + 4 side tables','Free delivery & installation','Old furniture collected'] },
+      '2 Kanal': { price:'50,00,000', items:['Drawing room: Premium L-shape sofa (9 seat)','TV lounge: Premium 3+2+1 seater (6 seat)','6 Bed frames','6 Wardrobes (3 door each)','1 Dining table + 12 chairs','12 Bedside tables','Coffee + 4 side tables','Free delivery & installation','Old furniture collected'] },
+      '5 Kanal': { price:'85,00,000', items:['Drawing room: Premium suite sofa (11 seat)','TV lounge: Premium L-shape (7 seat)','7 Bed frames','7 Wardrobes (3 door each)','1 Dining table + 14 chairs','14 Bedside tables','Coffee + 6 side tables','Free delivery & installation','Old furniture collected'] }
+    },
+    premium: {
+      '5 Marla': { price:'28,00,000', items:['Drawing room: Designer sofa (3+2 seater — 5 seat)','TV lounge: Designer 3 seater','3 King/Queen beds','3 Walk-in wardrobe units','1 Designer dining table + 6 chairs','Full décor & accessories','Free interior design','Priority delivery & installation','Old furniture collected'] },
+      '10 Marla':{ price:'42,00,000', items:['Drawing room: Designer sofa (3+2+1 seater — 6 seat)','TV lounge: Designer 5 seater','4 King/Queen beds','4 Walk-in wardrobe units','1 Designer dining table + 8 chairs','Full décor & accessories','Free interior design','Priority delivery & installation','Old furniture collected'] },
+      '1 Kanal': { price:'62,00,000', items:['Drawing room: Designer L-shape sofa (7 seat)','TV lounge: Designer 3+2 seater (5 seat)','5 King/Queen beds','5 Walk-in wardrobe units','1 Designer dining table + 10 chairs','Full décor & accessories','Free interior design','Priority delivery & installation','Old furniture collected'] },
+      '2 Kanal': { price:'90,00,000', items:['Drawing room: Designer L-shape sofa (9 seat)','TV lounge: Designer 3+2+1 seater (6 seat)','6 King/Queen beds','6 Walk-in wardrobe units','1 Designer dining table + 12 chairs','Full décor & accessories','Free interior design','Priority delivery & installation','Old furniture collected'] },
+      '5 Kanal': { price:'1,50,00,000', items:['Drawing room: Bespoke sofa suite (11 seat)','TV lounge: Designer L-shape (7 seat)','7 King/Queen beds','7 Walk-in wardrobe units','1 Designer dining table + 14 chairs','Full décor & accessories','Free interior design','Dedicated installation team','Old furniture collected'] }
+    }
+  }
+};
+
+const checkClasses = { economy:'check-forest', standard:'check-terra', premium:'check-gold' };
+const aptSizes   = ['1BR','2BR','3BR'];
+const houseSizes = ['5 Marla','10 Marla','1 Kanal','2 Kanal','5 Kanal'];
+let currentType  = 'apartment';
+
+function renderItems(featuresEl, items, tier) {
+  featuresEl.innerHTML = items.map(i => `<li><span class="feat-check ${checkClasses[tier]}">✓</span> ${i}</li>`).join('');
+  featuresEl.style.animation = 'none';
+  featuresEl.offsetHeight;
+  featuresEl.style.animation = 'pricePop 0.3s ease';
+}
+
+function initCard(group) {
+  const card      = group.closest('.pkg-card');
+  const priceEl   = card.querySelector('.pkg-price');
+  const featuresEl= card.querySelector('.pkg-features');
+  const tierEl    = card.querySelector('.pkg-tier');
+  let tier = 'economy';
+  if (tierEl.classList.contains('tier-std')) tier = 'standard';
+  if (tierEl.classList.contains('tier-prm')) tier = 'premium';
+
+  const sizes = currentType === 'apartment' ? aptSizes : houseSizes;
+  const defaultSize = sizes[0];
+
+  // Rebuild buttons
+  group.innerHTML = sizes.map((s,i) =>
+    `<button class="pkg-size-btn${i===0?' active':''}" data-size="${s}">${s}</button>`
+  ).join('');
+
+  // Render default
+  priceEl.textContent = 'Rs. ' + pkgData[currentType][tier][defaultSize].price;
+  renderItems(featuresEl, pkgData[currentType][tier][defaultSize].items, tier);
+
+  group.querySelectorAll('.pkg-size-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      group.querySelectorAll('.pkg-size-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const size = btn.dataset.size;
+      priceEl.textContent = 'Rs. ' + pkgData[currentType][tier][size].price;
+      priceEl.style.animation = 'none'; priceEl.offsetHeight;
+      priceEl.style.animation = 'pricePop 0.25s ease';
+      renderItems(featuresEl, pkgData[currentType][tier][size].items, tier);
+    });
+  });
+}
+
+function switchType(type) {
+  currentType = type;
+  const aptBtn   = document.getElementById('tabApt');
+  const houseBtn = document.getElementById('tabHouse');
+  aptBtn.style.background   = type==='apartment' ? 'var(--ink)' : 'transparent';
+  aptBtn.style.color        = type==='apartment' ? '#fff' : 'var(--muted)';
+  houseBtn.style.background = type==='house' ? 'var(--ink)' : 'transparent';
+  houseBtn.style.color      = type==='house' ? '#fff' : 'var(--muted)';
+  document.querySelectorAll('.pkg-sizes').forEach(initCard);
+}
+
+// Initialise on load
+document.querySelectorAll('.pkg-sizes').forEach(initCard);
+
+const priceStyle = document.createElement('style');
+priceStyle.textContent = '@keyframes pricePop { 0%{transform:scale(0.92);opacity:0.5} 100%{transform:scale(1);opacity:1} }';
+document.head.appendChild(priceStyle);
+</script>
+</body>
+</html>

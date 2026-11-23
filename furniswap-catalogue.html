@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Furniture Catalogue — FurniSwap</title>
+<meta name="description" content="Browse FurniSwap's complete furniture catalogue. Sofa sets, beds, dining tables and wardrobes across Economy, Standard and Premium tiers.">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cream:#F5EFE6; --cream-dark:#EDE4D6; --ink:#1a1208; --ink-soft:#3a2e26;
+  --terra:#C45C2A; --terra-light:#E07848; --forest:#3D6741; --forest-light:#527A4E;
+  --gold:#c8922a; --muted:#7a6e5f; --border:rgba(26,18,8,0.1);
+  --sage:#4a6741; --card:#faf7f2;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth; scroll-padding-top:80px;}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);overflow-x:hidden;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:24px 48px;display:flex;align-items:center;justify-content:space-between;transition:all 0.4s ease;}
+nav.scrolled{background:rgba(245,239,230,0.92);backdrop-filter:blur(12px);padding:16px 48px;border-bottom:1px solid var(--border);}
+.nav-brand{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:700;color:var(--ink);text-decoration:none;}
+.nav-brand span{color:var(--terra);}
+.nav-links{display:flex;gap:36px;list-style:none;}
+.nav-links a{font-size:13px;color:var(--ink-soft);text-decoration:none;transition:color 0.2s;}
+.nav-links a:hover,.nav-links a.active{color:var(--terra);}
+.nav-cta{background:var(--ink);color:var(--cream)!important;padding:10px 22px;border-radius:2px;font-weight:500!important;}
+.nav-cta:hover{background:var(--terra)!important;}
+.hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:6px;}
+.hamburger span{display:block;width:24px;height:2px;background:var(--ink);border-radius:2px;transition:all 0.3s ease;}
+.hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+.hamburger.open span:nth-child(2){opacity:0;}
+.hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+.mobile-menu{display:none;position:fixed;inset:0;background:var(--cream);z-index:200;flex-direction:column;align-items:center;justify-content:center;opacity:0;transition:opacity 0.3s ease;}
+.mobile-menu.open{display:flex;opacity:1;}
+.mobile-menu-brand{position:absolute;top:24px;left:28px;font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;color:var(--ink);text-decoration:none;}
+.mobile-menu-brand span{color:var(--terra);}
+.mobile-menu-links a{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:700;color:var(--ink);text-decoration:none;padding:14px 40px;width:100%;text-align:center;border-bottom:1px solid var(--border);display:block;transition:color 0.2s;}
+.mobile-menu-links a:first-child{border-top:1px solid var(--border);}
+.mobile-menu-links a:hover{color:var(--terra);}
+.mobile-menu-cta{margin-top:24px!important;background:var(--terra)!important;color:#fff!important;border-radius:2px;font-size:16px!important;font-family:'DM Sans',sans-serif!important;font-weight:500!important;padding:14px 40px!important;border-top:none!important;}
+
+/* PAGE HERO */
+.page-hero{padding:140px 48px 60px;background:var(--ink);position:relative;overflow:hidden;}
+.page-hero::before{content:'';position:absolute;width:500px;height:500px;border-radius:50%;top:-150px;right:-100px;background:radial-gradient(circle,rgba(200,146,42,0.1) 0%,transparent 70%);pointer-events:none;}
+.page-hero-inner{max-width:1100px;margin:0 auto;}
+.page-breadcrumb{font-size:12px;color:rgba(255,255,255,0.35);margin-bottom:20px;letter-spacing:1px;}
+.page-breadcrumb a{color:var(--gold);text-decoration:none;}
+.page-hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(36px,5vw,60px);font-weight:700;color:#fff;letter-spacing:-1px;line-height:1.1;margin-bottom:16px;}
+.page-hero h1 em{font-style:italic;color:var(--gold);}
+.page-hero p{font-size:15px;color:rgba(255,255,255,0.45);max-width:480px;line-height:1.7;font-weight:300;}
+
+/* CATALOGUE */
+.cat-wrap{max-width:1100px;margin:0 auto;padding:60px 48px;}
+.section-eyebrow{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--terra);font-weight:600;margin-bottom:10px;}
+
+.cat-filter{padding:8px 16px;border:1.5px solid var(--border);border-radius:20px;background:#fff;font-size:13px;font-weight:400;color:var(--muted);cursor:pointer;transition:all 0.2s;font-family:'DM Sans',sans-serif;min-height:44px;white-space:nowrap;display:inline-flex;align-items:center;}
+.cat-filter:hover{border-color:var(--terra);color:var(--terra);}
+.cat-filter.active{background:var(--ink);border-color:var(--ink);color:#fff;font-weight:500;}
+
+.cat-card{background:#fff;border:1px solid var(--border);border-radius:6px;overflow:hidden;transition:transform 0.25s ease,box-shadow 0.25s ease;animation:fadeUp 0.4s ease both;}
+.cat-card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(28,20,16,0.1);}
+.tier-eco{background:rgba(74,103,65,0.1);color:var(--sage);}
+.tier-std{background:rgba(196,92,42,0.1);color:var(--terra);}
+.tier-prm{background:rgba(200,146,42,0.12);color:#B8860B;}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+
+/* FOOTER */
+footer{background:var(--ink);padding:48px;}
+.footer-inner{max-width:1100px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:24px;}
+.footer-brand-sm{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;color:#fff;}
+.footer-brand-sm span{color:var(--terra);}
+.footer-links-sm{display:flex;gap:24px;list-style:none;flex-wrap:wrap;}
+.footer-links-sm a{font-size:13px;color:rgba(255,255,255,0.35);text-decoration:none;transition:color 0.2s;}
+.footer-links-sm a:hover{color:rgba(255,255,255,0.7);}
+.footer-wa-sm{font-size:13px;color:rgba(255,255,255,0.4);}
+.footer-wa-sm strong{color:var(--gold);}
+
+/* SCROLL PROGRESS */
+.scroll-progress{position:fixed;top:0;left:0;height:3px;width:0%;background:linear-gradient(90deg,var(--terra),var(--gold));z-index:999;transition:width 0.1s linear;box-shadow:0 1px 4px rgba(196,92,42,0.4);}
+
+@media(max-width:768px){
+  nav{padding:20px 24px;}
+  nav.scrolled{padding:14px 24px;}
+  .nav-links{display:none;}
+  .hamburger{display:flex;}
+  .page-hero{padding:120px 24px 48px;}
+  .cat-wrap{padding:40px 20px;}
+  footer{padding:32px 20px;}
+  .footer-inner{flex-direction:column;align-items:flex-start;gap:16px;}
+  #roomFilters,#tierFilters{overflow-x:auto;flex-wrap:nowrap!important;padding-bottom:6px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+  #roomFilters::-webkit-scrollbar,#tierFilters::-webkit-scrollbar{display:none;}
+  .cat-filter{flex-shrink:0;}
+}
+</style>
+</head>
+<body>
+
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="furniswap-website.html" class="mobile-menu-brand">Furni<span>Swap</span></a>
+  <div class="mobile-menu-links">
+    <a href="furniswap-website.html#how" onclick="closeMobileMenu()">How It Works</a>
+    <a href="furniswap-website.html#packages" onclick="closeMobileMenu()">Packages</a>
+    <a href="furniswap-catalogue.html" onclick="closeMobileMenu()" style="color:var(--terra);">Catalogue</a>
+    <a href="furniswap-calculator.html" onclick="closeMobileMenu()">Calculator</a>
+    <a href="furniswap-website.html#why" onclick="closeMobileMenu()">Why Us</a>
+    <a href="furniswap-website.html#faq" onclick="closeMobileMenu()">FAQ</a>
+    <a href="https://wa.me/923437761250" class="mobile-menu-cta">Get Started →</a>
+  </div>
+</div>
+
+<nav id="navbar">
+  <a href="furniswap-website.html" class="nav-brand">Furni<span>Swap</span></a>
+  <ul class="nav-links">
+    <li><a href="furniswap-website.html#how">How It Works</a></li>
+    <li><a href="furniswap-website.html#packages">Packages</a></li>
+    <li><a href="furniswap-catalogue.html" class="active">Catalogue</a></li>
+    <li><a href="furniswap-calculator.html">Calculator</a></li>
+    <li><a href="furniswap-website.html#why">Why Us</a></li>
+    <li><a href="furniswap-website.html#faq">FAQ</a></li>
+    <li><a href="https://wa.me/923437761250" class="nav-cta">Get Started</a></li>
+  </ul>
+  <button class="hamburger" id="hamburger" onclick="toggleMobileMenu()" aria-label="Toggle menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<div class="page-hero">
+  <div class="page-hero-inner">
+    <div class="page-breadcrumb"><a href="furniswap-website.html">Home</a> · Furniture Catalogue</div>
+    <h1>Browse what's inside<br>every <em>package</em></h1>
+    <p>All furniture included in our packages, shown individually with price ranges. Full packages are significantly cheaper than buying pieces separately.</p>
+  </div>
+</div>
+
+<div class="cat-wrap">
+
+  <!-- FILTERS -->
+  <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:36px;">
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+      <span style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:500;min-width:64px;">Room</span>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;" id="roomFilters">
+        <button class="cat-filter active" onclick="applyFilter('room','all',this)">All Rooms</button>
+        <button class="cat-filter" onclick="applyFilter('room','living',this)">🛋️ Living Room</button>
+        <button class="cat-filter" onclick="applyFilter('room','bedroom',this)">🛏️ Bedroom</button>
+        <button class="cat-filter" onclick="applyFilter('room','dining',this)">🍽️ Dining</button>
+        <button class="cat-filter" onclick="applyFilter('room','storage',this)">🚪 Storage</button>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+      <span style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:500;min-width:64px;">Tier</span>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;" id="tierFilters">
+        <button class="cat-filter active" onclick="applyFilter('tier','all',this)">All Tiers</button>
+        <button class="cat-filter" onclick="applyFilter('tier','economy',this)">Economy</button>
+        <button class="cat-filter" onclick="applyFilter('tier','standard',this)">Standard</button>
+        <button class="cat-filter" onclick="applyFilter('tier','premium',this)">Premium</button>
+      </div>
+    </div>
+  </div>
+
+  <div style="font-size:13px;color:var(--muted);margin-bottom:24px;" id="catalogueCount">Showing 12 items</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px;" id="catalogueGrid"></div>
+  <div id="catalogueEmpty" style="display:none;text-align:center;padding:80px 20px;">
+    <div style="font-size:48px;margin-bottom:16px;">🔍</div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:700;margin-bottom:8px;">No items found</div>
+    <div style="font-size:14px;color:var(--muted);">Try adjusting your filters</div>
+    <button onclick="resetFilters()" style="margin-top:20px;background:var(--terra);color:#fff;border:none;padding:12px 28px;border-radius:2px;font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;">Clear Filters</button>
+  </div>
+
+  <div style="background:var(--ink);border-radius:4px;padding:28px 32px;margin-top:48px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+    <div>
+      <div style="font-size:15px;font-weight:500;color:#fff;margin-bottom:4px;">Want everything as a complete package?</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.4);">Full apartment & house packages are significantly cheaper than individual pieces.</div>
+    </div>
+    <a href="furniswap-website.html#packages" style="background:var(--terra);color:#fff;padding:12px 24px;border-radius:2px;text-decoration:none;font-size:13px;font-weight:500;white-space:nowrap;">View Packages →</a>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand-sm">Furni<span>Swap</span></div>
+    <ul class="footer-links-sm">
+      <li><a href="furniswap-website.html">Home</a></li>
+      <li><a href="furniswap-website.html#packages">Packages</a></li>
+      <li><a href="furniswap-calculator.html">Calculator</a></li>
+      <li><a href="furniswap-website.html#faq">FAQ</a></li>
+    </ul>
+    <div class="footer-wa-sm">💬 <strong>0343 7761250</strong> · Islamabad & Rawalpindi</div>
+  </div>
+</footer>
+
+<script>
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  navbar.classList.toggle('scrolled', window.scrollY > 60);
+  document.getElementById('scrollProgress').style.width =
+    (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight) * 100) + '%';
+}, {passive:true});
+
+function toggleMobileMenu() {
+  const menu = document.getElementById('mobileMenu');
+  const ham = document.getElementById('hamburger');
+  const isOpen = menu.classList.contains('open');
+  menu.classList.toggle('open', !isOpen);
+  ham.classList.toggle('open', !isOpen);
+  document.body.style.overflow = isOpen ? '' : 'hidden';
+}
+function closeMobileMenu() {
+  document.getElementById('mobileMenu').classList.remove('open');
+  document.getElementById('hamburger').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+const catalogueItems = [
+  {id:1,name:'Classic 3+2 Sofa Set',room:'living',roomLabel:'Living Room',tier:'economy',desc:'Durable fabric, foam cushions, available in 6 colors.',priceMin:45000,priceMax:75000,sizes:'3+2 Seater',icon:'sofa'},
+  {id:2,name:'Premium 3+2+1 Sofa Set',room:'living',roomLabel:'Living Room',tier:'standard',desc:'High-density foam, premium upholstery, wooden frame.',priceMin:85000,priceMax:130000,sizes:'3+2+1 Seater',icon:'sofa'},
+  {id:3,name:'Designer L-Shape Sofa',room:'living',roomLabel:'Living Room',tier:'premium',desc:'Italian-inspired design, deep-seat comfort, velvet or leather finish.',priceMin:180000,priceMax:280000,sizes:'7 Seater L-Shape',icon:'sofa'},
+  {id:4,name:'Bed Frame',room:'bedroom',roomLabel:'Bedroom',tier:'economy',desc:'Solid wood frame, sturdy and long-lasting. Single or double sizes.',priceMin:28000,priceMax:45000,sizes:'Single / Double',icon:'bed'},
+  {id:5,name:'King Bed',room:'bedroom',roomLabel:'Bedroom',tier:'standard',desc:'Upholstered headboard, premium finish, side storage drawers.',priceMin:65000,priceMax:100000,sizes:'King / Queen',icon:'bed'},
+  {id:6,name:'Designer Bed Suite',room:'bedroom',roomLabel:'Bedroom',tier:'premium',desc:'Custom headboard, luxury finish, matching side tables included.',priceMin:140000,priceMax:220000,sizes:'King Size',icon:'bed'},
+  {id:7,name:'Dining Table + 4 Chairs',room:'dining',roomLabel:'Dining Room',tier:'economy',desc:'Solid wood top, comfortable chairs, easy to clean.',priceMin:30000,priceMax:50000,sizes:'4 Seater',icon:'dining'},
+  {id:8,name:'Dining Table + 6 Chairs',room:'dining',roomLabel:'Dining Room',tier:'standard',desc:'Extendable table top, padded chairs, premium wood finish.',priceMin:60000,priceMax:90000,sizes:'6 Seater',icon:'dining'},
+  {id:9,name:'Designer Dining Set',room:'dining',roomLabel:'Dining Room',tier:'premium',desc:'Marble-top or glass table, upholstered chairs.',priceMin:110000,priceMax:180000,sizes:'8 Seater',icon:'dining'},
+  {id:10,name:'2-Door Wardrobe',room:'storage',roomLabel:'Storage',tier:'economy',desc:'Hanging rail, two shelves, mirror option available.',priceMin:22000,priceMax:38000,sizes:'2 Door',icon:'wardrobe'},
+  {id:11,name:'3-Door Wardrobe',room:'storage',roomLabel:'Storage',tier:'standard',desc:'Full-length mirror, multiple compartments, soft-close doors.',priceMin:42000,priceMax:68000,sizes:'3 Door',icon:'wardrobe'},
+  {id:12,name:'Walk-in Wardrobe Unit',room:'storage',roomLabel:'Storage',tier:'premium',desc:'Modular system, LED lighting, custom compartments.',priceMin:90000,priceMax:150000,sizes:'Walk-in',icon:'wardrobe'},
+];
+
+function svgIcon(type,tier){
+  const c={economy:{main:'#3D8B7A',dark:'#2A6B5A',light:'#7DC4B8',bg:'rgba(61,139,122,0.08)',leg:'#1A4B3A'},standard:{main:'#C8721A',dark:'#A05010',light:'#E8A060',bg:'rgba(200,114,26,0.08)',leg:'#804010'},premium:{main:'#B8860B',dark:'#8B6508',light:'#D4A843',bg:'rgba(184,134,11,0.08)',leg:'#6B4E08'}}[tier];
+  if(type==='sofa')return`<svg viewBox="0 0 100 56"><rect x="2" y="12" width="96" height="24" rx="5" fill="${c.main}"/><rect x="2" y="12" width="14" height="30" rx="5" fill="${c.dark}"/><rect x="84" y="12" width="14" height="30" rx="5" fill="${c.dark}"/><rect x="16" y="30" width="68" height="12" rx="3" fill="${c.light}"/><line x1="50" y1="14" x2="50" y2="29" stroke="${c.dark}" stroke-width="2" opacity="0.4" stroke-linecap="round"/><rect x="14" y="42" width="10" height="8" rx="2" fill="${c.leg}"/><rect x="76" y="42" width="10" height="8" rx="2" fill="${c.leg}"/></svg>`;
+  if(type==='bed')return`<svg viewBox="0 0 100 62"><rect x="2" y="6" width="96" height="16" rx="5" fill="${c.dark}"/><rect x="2" y="20" width="96" height="30" rx="4" fill="${c.main}"/><rect x="8" y="24" width="36" height="14" rx="4" fill="${c.light}" opacity="0.85"/><rect x="56" y="24" width="36" height="14" rx="4" fill="${c.light}" opacity="0.85"/><rect x="2" y="48" width="96" height="6" rx="2" fill="${c.dark}"/><rect x="6" y="50" width="10" height="8" rx="2" fill="${c.leg}"/><rect x="84" y="50" width="10" height="8" rx="2" fill="${c.leg}"/></svg>`;
+  if(type==='dining')return`<svg viewBox="0 0 100 62"><rect x="0" y="16" width="18" height="22" rx="4" fill="${c.main}"/><rect x="3" y="38" width="12" height="10" rx="2" fill="${c.dark}"/><rect x="82" y="16" width="18" height="22" rx="4" fill="${c.main}"/><rect x="85" y="38" width="12" height="10" rx="2" fill="${c.dark}"/><rect x="16" y="22" width="68" height="10" rx="4" fill="${c.dark}"/><rect x="24" y="32" width="8" height="18" rx="2" fill="${c.main}"/><rect x="68" y="32" width="8" height="18" rx="2" fill="${c.main}"/><rect x="32" y="16" width="16" height="20" rx="4" fill="${c.light}" opacity="0.7"/><rect x="52" y="16" width="16" height="20" rx="4" fill="${c.light}" opacity="0.7"/><rect x="34" y="36" width="12" height="8" rx="2" fill="${c.main}"/><rect x="54" y="36" width="12" height="8" rx="2" fill="${c.main}"/></svg>`;
+  return`<svg viewBox="0 0 80 90"><rect x="2" y="2" width="76" height="80" rx="5" fill="${c.main}"/><rect x="2" y="2" width="76" height="10" rx="5" fill="${c.dark}"/><line x1="40" y1="12" x2="40" y2="82" stroke="${c.dark}" stroke-width="2.5" opacity="0.6"/><rect x="30" y="42" width="6" height="10" rx="3" fill="${c.dark}"/><rect x="44" y="42" width="6" height="10" rx="3" fill="${c.dark}"/><rect x="8" y="18" width="24" height="18" rx="2" fill="${c.light}" opacity="0.25"/><rect x="48" y="18" width="24" height="18" rx="2" fill="${c.light}" opacity="0.25"/><rect x="8" y="82" width="14" height="6" rx="2" fill="${c.leg}"/><rect x="58" y="82" width="14" height="6" rx="2" fill="${c.leg}"/></svg>`;
+}
+
+function renderCatalogue(items){
+  const grid=document.getElementById('catalogueGrid');
+  const count=document.getElementById('catalogueCount');
+  const empty=document.getElementById('catalogueEmpty');
+  grid.innerHTML='';
+  if(!items.length){empty.style.display='block';grid.style.display='none';count.textContent='No items found';return;}
+  empty.style.display='none';grid.style.display='grid';
+  count.textContent=`Showing ${items.length} item${items.length!==1?'s':''}`;
+  items.forEach((item,i)=>{
+    const tl=item.tier.charAt(0).toUpperCase()+item.tier.slice(1);
+    const wa=encodeURIComponent(`Hi FurniSwap! I'm interested in the ${tl} ${item.name}. Price Rs. ${(item.priceMin/1000).toFixed(0)}K–${(item.priceMax/1000).toFixed(0)}K. Can you tell me more?`);
+    const card=document.createElement('div');
+    card.className='cat-card';
+    card.style.animationDelay=`${i*60}ms`;
+    card.dataset.room=item.room;card.dataset.tier=item.tier;
+    card.innerHTML=`
+      <div style="background:${item.tier==='economy'?'rgba(61,94,58,0.06)':item.tier==='standard'?'rgba(196,92,42,0.06)':'rgba(184,134,11,0.06)'};padding:28px;display:flex;align-items:center;justify-content:center;min-height:140px;">
+        <div style="width:${item.icon==='wardrobe'?'72px':'100%'};max-width:${item.icon==='wardrobe'?'72px':'160px'}">${svgIcon(item.icon,item.tier)}</div>
+      </div>
+      <div style="padding:20px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap;">
+          <span style="font-size:10px;padding:3px 10px;border-radius:12px;font-weight:600;" class="tier-${item.tier.substring(0,3)}">${tl}</span>
+          <span style="font-size:10px;color:var(--muted);background:var(--cream-dark);padding:3px 10px;border-radius:12px;">${item.roomLabel}</span>
+          <span style="font-size:10px;color:var(--muted);margin-left:auto;">${item.sizes}</span>
+        </div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:700;color:var(--ink);margin-bottom:6px;line-height:1.3;">${item.name}</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:14px;">${item.desc}</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding-top:12px;border-top:1px solid var(--border);">
+          <div>
+            <div style="font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:2px;">Price Range</div>
+            <div style="font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:700;color:var(--ink);">Rs. ${(item.priceMin/1000).toFixed(0)}K – ${(item.priceMax/1000).toFixed(0)}K</div>
+          </div>
+          <a href="https://wa.me/923437761250?text=${wa}" style="background:var(--terra);color:#fff;padding:10px 16px;border-radius:2px;text-decoration:none;font-size:12px;font-weight:500;white-space:nowrap;min-height:44px;display:flex;align-items:center;">Enquire →</a>
+        </div>
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+
+let activeRoom='all', activeTier='all';
+function applyFilter(type,value,btn){
+  if(type==='room'){activeRoom=value;document.querySelectorAll('#roomFilters .cat-filter').forEach(b=>b.classList.remove('active'));}
+  else{activeTier=value;document.querySelectorAll('#tierFilters .cat-filter').forEach(b=>b.classList.remove('active'));}
+  btn.classList.add('active');
+  renderCatalogue(catalogueItems.filter(i=>(activeRoom==='all'||i.room===activeRoom)&&(activeTier==='all'||i.tier===activeTier)));
+}
+function resetFilters(){
+  activeRoom='all';activeTier='all';
+  document.querySelectorAll('.cat-filter').forEach(b=>{b.classList.remove('active');if(b.textContent.includes('All'))b.classList.add('active');});
+  renderCatalogue(catalogueItems);
+}
+renderCatalogue(catalogueItems);
+</script>
+</body>
+</html>
