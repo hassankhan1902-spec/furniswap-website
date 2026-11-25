@@ -3735,6 +3735,69 @@
       background: var(--terracotta);
     }
 
+    /* -------------------------------------------------------------
+       PHOTO QUOTE UPLOAD (Phase 1: upload → compress → Drive)
+       ------------------------------------------------------------- */
+    .pq-section { background: var(--warm-cream-alt); }
+    .pq-card {
+      max-width: 640px;
+      margin: 0 auto;
+      background: var(--card-bg);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      padding: 32px;
+    }
+    .pq-card .photo-dropzone { display: block; }
+    .pq-card .photo-dropzone input[type="file"] {
+      position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none;
+    }
+    .pq-card .photo-dropzone:focus-within {
+      border-color: var(--terracotta);
+      box-shadow: 0 0 0 3px var(--terracotta-soft);
+    }
+    .pq-count { font-size: 12px; color: var(--charcoal-muted); margin-top: 8px; min-height: 16px; }
+    .pq-honeypot { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+    .pq-turnstile { margin: 4px 0 18px; min-height: 0; }
+    .pq-submit { width: 100%; justify-content: center; }
+    .pq-submit[disabled] { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: none; }
+    .pq-progress {
+      display: none;
+      height: 6px;
+      border-radius: var(--radius-full);
+      background: var(--beige-light);
+      overflow: hidden;
+      margin-top: 14px;
+    }
+    .pq-progress.active { display: block; }
+    .pq-progress-bar { height: 100%; width: 0; background: var(--terracotta); transition: width 0.2s; }
+    .pq-msg { font-size: 13px; margin-top: 12px; min-height: 18px; }
+    .pq-msg.error { color: var(--terracotta-hover); }
+    .pq-fineprint { font-size: 12px; color: var(--charcoal-muted); text-align: center; margin-top: 14px; }
+    .pq-success { display: none; text-align: center; padding: 8px 0; }
+    .pq-success.active { display: block; }
+    .pq-success-icon {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: var(--sage-soft); color: var(--sage);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 14px;
+    }
+    .pq-ref {
+      display: inline-block;
+      font-family: ui-monospace, 'SFMono-Regular', Consolas, monospace;
+      font-size: 18px; font-weight: 700; letter-spacing: 1px;
+      color: var(--charcoal);
+      background: var(--warm-cream);
+      border: 1px dashed var(--terracotta-border);
+      border-radius: var(--radius-sm);
+      padding: 8px 16px;
+      margin: 10px 0 18px;
+    }
+    @media (max-width: 600px) {
+      .pq-card { padding: 22px 16px; border-radius: var(--radius-md); }
+      .pq-card .form-row { grid-template-columns: 1fr; gap: 0; }
+    }
+
     /* Form Fields */
     .form-group {
       margin-bottom: 18px;
@@ -5212,6 +5275,7 @@
 
       <div class="drawer-nav-list">
         <a href="#how" class="drawer-nav-link" onclick="closeDrawer()" data-i18n="nav_how">How It Works</a>
+        <a href="#photo-quote" class="drawer-nav-link" onclick="closeDrawer()" data-i18n="nav_photo_quote">Photo Quote</a>
         <a href="#catalogue" class="drawer-nav-link" onclick="closeDrawer()" data-i18n="nav_catalogue">Furniture Collection</a>
         <a href="#calculator" class="drawer-nav-link" onclick="closeDrawer()" data-i18n="nav_calculator">Swap Calculator</a>
         <a href="#why-us" class="drawer-nav-link" onclick="closeDrawer()" data-i18n="nav_why">Why FurniSwap</a>
@@ -5358,6 +5422,88 @@
           <div class="step-badge-num">03</div>
           <h3 class="step-card-title" data-i18n="step3_title">Same-Day Swap</h3>
           <p class="step-card-desc" data-i18n="step3_desc">We deliver your new furniture, set it up in your room, and take away the old &mdash; all in a single trip. You only pay the difference after your swap credit.</p>
+        </div>
+      </div>
+
+      <div style="text-align:center; margin-top:36px;">
+        <a href="#photo-quote" class="btn-primary">
+          <span data-i18n="pq_how_cta">Upload Photos for a Free Quote &rarr;</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- -------------------------------------------------------------
+       PHOTO QUOTE UPLOAD SECTION
+       ------------------------------------------------------------- -->
+  <section class="section-py pq-section" id="photo-quote" aria-label="Upload furniture photos for a free quote">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag" data-i18n="pq_tag">Free Photo Quote</span>
+        <h2 class="section-title"><span data-i18n="pq_title_1">Upload photos, get your </span><em data-i18n="pq_title_em">swap credit</em></h2>
+        <p class="section-desc" data-i18n="pq_desc">
+          Add a few clear photos of your old furniture. Our team reviews them and sends your quote on WhatsApp.
+        </p>
+      </div>
+
+      <div class="pq-card">
+        <form id="pqForm" novalidate>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="pqName"><span data-i18n="pq_name_label">Your name</span> <span class="req">*</span></label>
+              <input class="form-control" type="text" id="pqName" name="name" autocomplete="name" maxlength="80" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="pqPhone"><span data-i18n="pq_phone_label">WhatsApp number</span> <span class="req">*</span></label>
+              <input class="form-control" type="tel" id="pqPhone" name="phone" autocomplete="tel" inputmode="tel" placeholder="03XX XXXXXXX" maxlength="20" required dir="ltr">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <span class="form-label"><span data-i18n="pq_photos_label">Furniture photos (up to 6)</span> <span class="req">*</span></span>
+            <label class="photo-dropzone" id="pqDropzone" for="pqFiles">
+              <input type="file" id="pqFiles" accept="image/*" multiple>
+              <div class="dropzone-icon" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+              </div>
+              <div class="dropzone-text" data-i18n="pq_drop_main">Tap to take or choose photos</div>
+              <div class="dropzone-sub" data-i18n="pq_drop_sub">Front, side, and any damage &middot; JPG or PNG</div>
+            </label>
+            <div class="photo-previews-container" id="pqPreviews"></div>
+            <div class="pq-count" id="pqCount" aria-live="polite"></div>
+          </div>
+
+          <div class="pq-honeypot" aria-hidden="true">
+            <label for="pqWebsite">Website</label>
+            <input type="text" id="pqWebsite" name="website" tabindex="-1" autocomplete="off">
+          </div>
+
+          <div class="pq-turnstile" id="pqTurnstile"></div>
+
+          <button type="submit" class="btn-primary pq-submit" id="pqSubmit">
+            <span data-i18n="pq_submit">Send Photos for Free Quote &rarr;</span>
+          </button>
+          <div class="pq-progress" id="pqProgress"><div class="pq-progress-bar" id="pqProgressBar"></div></div>
+          <div class="pq-msg" id="pqMsg" role="status" aria-live="polite"></div>
+          <p class="pq-fineprint" data-i18n="pq_fineprint">Photos are only used to prepare your quote. No obligation.</p>
+        </form>
+
+        <div class="pq-success" id="pqSuccess">
+          <div class="pq-success-icon" aria-hidden="true">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <h3 class="val-card-title" data-i18n="pq_success_title">Photos received!</h3>
+          <p class="section-desc" style="font-size:14px; margin-top:6px;" data-i18n="pq_success_desc">Your reference number:</p>
+          <div class="pq-ref" id="pqRef" dir="ltr"></div>
+          <div>
+            <a href="#" class="btn-primary" id="pqWaLink" target="_blank" rel="noopener">
+              <span data-i18n="pq_success_wa">Message us on WhatsApp &rarr;</span>
+            </a>
+          </div>
+          <p class="pq-fineprint" data-i18n="pq_success_note">Our team will review your photos and reply with a quote, usually within a few hours.</p>
+          <button type="button" class="btn-secondary" style="margin-top:10px;" onclick="pqReset()">
+            <span data-i18n="pq_again">Send another item</span>
+          </button>
         </div>
       </div>
     </div>
@@ -6486,6 +6632,24 @@
       topbar_text: { en: 'DHA, Bahria Town, F &amp; E Sectors, Gulberg &middot; Send photos on WhatsApp for a free price check!', ur: 'ڈی ایچ اے، بحریہ ٹاؤن، اسلام آباد سیکٹرز اور گلبرگ &middot; واٹس ایپ پر مفت قیمت معلوم کریں!' },
       topbar_link: { en: 'Check Furniture Value &rarr;', ur: 'فرنیچر کی قیمت معلوم کریں &larr;' },
       nav_how: { en: 'How It Works', ur: 'طریقہ کار' },
+      nav_photo_quote: { en: 'Photo Quote', ur: 'تصویر سے قیمت' },
+      pq_how_cta: { en: 'Upload Photos for a Free Quote &rarr;', ur: 'مفت قیمت کے لیے تصاویر بھیجیں &larr;' },
+      pq_tag: { en: 'Free Photo Quote', ur: 'تصویر سے مفت قیمت' },
+      pq_title_1: { en: 'Upload photos, get your ', ur: 'تصاویر بھیجیں، اپنا ' },
+      pq_title_em: { en: 'swap credit', ur: 'سویپ کریڈٹ معلوم کریں' },
+      pq_desc: { en: 'Add a few clear photos of your old furniture. Our team reviews them and sends your quote on WhatsApp.', ur: 'اپنے پرانے فرنیچر کی چند واضح تصاویر شامل کریں۔ ہماری ٹیم انہیں دیکھ کر واٹس ایپ پر آپ کو قیمت بھیجے گی۔' },
+      pq_name_label: { en: 'Your name', ur: 'آپ کا نام' },
+      pq_phone_label: { en: 'WhatsApp number', ur: 'واٹس ایپ نمبر' },
+      pq_photos_label: { en: 'Furniture photos (up to 6)', ur: 'فرنیچر کی تصاویر (زیادہ سے زیادہ 6)' },
+      pq_drop_main: { en: 'Tap to take or choose photos', ur: 'تصویر لینے یا منتخب کرنے کے لیے ٹیپ کریں' },
+      pq_drop_sub: { en: 'Front, side, and any damage &middot; JPG or PNG', ur: 'سامنے، سائیڈ اور کوئی نقص ہو تو اس کی تصویر &middot; JPG یا PNG' },
+      pq_submit: { en: 'Send Photos for Free Quote &rarr;', ur: 'مفت قیمت کے لیے تصاویر بھیجیں &larr;' },
+      pq_fineprint: { en: 'Photos are only used to prepare your quote. No obligation.', ur: 'تصاویر صرف آپ کی قیمت کے تخمینے کے لیے استعمال ہوں گی۔ کوئی پابندی نہیں۔' },
+      pq_success_title: { en: 'Photos received!', ur: 'تصاویر موصول ہو گئیں!' },
+      pq_success_desc: { en: 'Your reference number:', ur: 'آپ کا ریفرنس نمبر:' },
+      pq_success_wa: { en: 'Message us on WhatsApp &rarr;', ur: 'واٹس ایپ پر رابطہ کریں &larr;' },
+      pq_success_note: { en: 'Our team will review your photos and reply with a quote, usually within a few hours.', ur: 'ہماری ٹیم آپ کی تصاویر دیکھ کر عموماً چند گھنٹوں میں قیمت بھیج دے گی۔' },
+      pq_again: { en: 'Send another item', ur: 'ایک اور چیز بھیجیں' },
       step1_num: { en: 'Step 01', ur: 'پہلا مرحلہ' },
       step1_title: { en: 'Send Photos', ur: 'تصاویر بھیجیں' },
       step1_desc: { en: 'Share pictures of your old furniture on WhatsApp or upload here. We review condition &amp; give you a fair swap credit — usually within 30 minutes.', ur: 'واٹس ایپ پر یا یہاں اپنے پرانے فرنیچر کی تصاویر شیئر کریں۔ ہم 30 منٹ کے اندر بہترین سویپ کریڈٹ بتاتے ہیں۔' },
@@ -9516,6 +9680,237 @@ function closeLightboxModal() {
     } else {
       initAll();
     }
+  </script>
+
+  <!-- -------------------------------------------------------------
+       PHOTO QUOTE UPLOAD: compress in browser, POST to /api/quote-upload
+       ------------------------------------------------------------- -->
+  <script>
+  (function () {
+    // Public Turnstile site key. Leave empty until the widget is created in Cloudflare.
+    const PQ_TURNSTILE_SITE_KEY = '';
+    const PQ_MAX_PHOTOS = 6;
+    const PQ_MAX_EDGE = 1600;
+    const PQ_TARGET_BYTES = 400 * 1024;
+    const PQ_WA_NUMBER = '923181955181';
+
+    const form = document.getElementById('pqForm');
+    if (!form) return;
+    const fileInput = document.getElementById('pqFiles');
+    const dropzone = document.getElementById('pqDropzone');
+    const previews = document.getElementById('pqPreviews');
+    const countEl = document.getElementById('pqCount');
+    const submitBtn = document.getElementById('pqSubmit');
+    const msgEl = document.getElementById('pqMsg');
+    const progress = document.getElementById('pqProgress');
+    const progressBar = document.getElementById('pqProgressBar');
+    const successEl = document.getElementById('pqSuccess');
+
+    let photos = [];          // [{ blob, url }]
+    let processing = 0;       // photos still being compressed
+    let turnstileWidgetId = null;
+
+    const isUr = () => {
+      try { return currentLang === 'ur'; } catch (e) { return document.documentElement.lang === 'ur'; }
+    };
+    const t = (en, ur) => (isUr() ? ur : en);
+
+    function setMsg(text, isError) {
+      msgEl.textContent = text || '';
+      msgEl.classList.toggle('error', !!isError);
+    }
+
+    // Returns 92XXXXXXXXXX for Pakistani mobiles, or the digits of an
+    // international number entered with + / 00. Null if invalid.
+    function normalizePhone(raw) {
+      const s = String(raw || '').trim();
+      let d = s.replace(/\D/g, '');
+      const intl = s.startsWith('+') || d.startsWith('00');
+      if (d.startsWith('00')) d = d.slice(2);
+      if (/^03\d{9}$/.test(d)) return '92' + d.slice(1);
+      if (/^3\d{9}$/.test(d)) return '92' + d;
+      if (/^923\d{9}$/.test(d)) return d;
+      if (intl && /^[1-9]\d{9,14}$/.test(d) && !d.startsWith('92')) return d;
+      return null;
+    }
+
+    async function loadImage(file) {
+      if (window.createImageBitmap) {
+        try { return await createImageBitmap(file, { imageOrientation: 'from-image' }); } catch (e) { /* fall back */ }
+      }
+      const url = URL.createObjectURL(file);
+      try {
+        const img = new Image();
+        img.src = url;
+        await img.decode();
+        return img;
+      } finally {
+        URL.revokeObjectURL(url);
+      }
+    }
+
+    // Long edge ≤ 1600px, JPEG, stepped down until ≤ ~400KB.
+    async function compressPhoto(file) {
+      const src = await loadImage(file);
+      const w0 = src.naturalWidth || src.width;
+      const h0 = src.naturalHeight || src.height;
+      let scale = Math.min(1, PQ_MAX_EDGE / Math.max(w0, h0));
+      let quality = 0.82;
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      let blob = null;
+      for (let i = 0; i < 8; i++) {
+        canvas.width = Math.max(1, Math.round(w0 * scale));
+        canvas.height = Math.max(1, Math.round(h0 * scale));
+        ctx.fillStyle = '#FFFFFF';               // transparent PNGs → white, not black
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(src, 0, 0, canvas.width, canvas.height);
+        blob = await new Promise(res => canvas.toBlob(res, 'image/jpeg', quality));
+        if (!blob) throw new Error('encode failed');
+        if (blob.size <= PQ_TARGET_BYTES) break;
+        if (quality > 0.62) quality -= 0.08;
+        else { scale *= 0.85; quality = 0.75; }
+      }
+      if (src.close) src.close();
+      return blob;
+    }
+
+    function render() {
+      previews.innerHTML = '';
+      photos.forEach((p, idx) => {
+        const item = document.createElement('div');
+        item.className = 'photo-preview-item';
+        const img = document.createElement('img');
+        img.src = p.url;
+        img.alt = t('Photo ', 'تصویر ') + (idx + 1);
+        const rm = document.createElement('button');
+        rm.type = 'button';
+        rm.className = 'photo-preview-remove';
+        rm.setAttribute('aria-label', t('Remove photo', 'تصویر ہٹائیں'));
+        rm.innerHTML = '&times;';
+        rm.onclick = () => { URL.revokeObjectURL(p.url); photos.splice(idx, 1); render(); };
+        item.append(img, rm);
+        previews.appendChild(item);
+      });
+      const kb = Math.round(photos.reduce((s, p) => s + p.blob.size, 0) / 1024);
+      countEl.textContent = processing
+        ? t('Preparing photos…', 'تصاویر تیار ہو رہی ہیں…')
+        : (photos.length ? t(`${photos.length} of ${PQ_MAX_PHOTOS} photos · ${kb} KB`, `${photos.length} / ${PQ_MAX_PHOTOS} تصاویر · ${kb} KB`) : '');
+    }
+
+    async function addFiles(fileList) {
+      setMsg('');
+      const files = Array.from(fileList || []).filter(f => f.type.startsWith('image/') || /\.(heic|heif)$/i.test(f.name));
+      const room = PQ_MAX_PHOTOS - photos.length - processing;
+      if (files.length > room) setMsg(t(`You can add up to ${PQ_MAX_PHOTOS} photos.`, `آپ زیادہ سے زیادہ ${PQ_MAX_PHOTOS} تصاویر شامل کر سکتے ہیں۔`), true);
+      const batch = files.slice(0, Math.max(0, room));
+      processing += batch.length;
+      render();
+      for (const file of batch) {
+        try {
+          const blob = await compressPhoto(file);
+          photos.push({ blob, url: URL.createObjectURL(blob) });
+        } catch (e) {
+          setMsg(t(`Couldn't read "${file.name}". Please use a JPG or PNG photo.`, `"${file.name}" نہیں کھل سکی۔ براہِ کرم JPG یا PNG تصویر استعمال کریں۔`), true);
+        } finally {
+          processing--;
+          render();
+        }
+      }
+    }
+
+    fileInput.addEventListener('change', e => { addFiles(e.target.files); e.target.value = ''; });
+    ['dragenter', 'dragover'].forEach(ev => dropzone.addEventListener(ev, e => { e.preventDefault(); dropzone.classList.add('dragover'); }));
+    ['dragleave', 'drop'].forEach(ev => dropzone.addEventListener(ev, e => { e.preventDefault(); dropzone.classList.remove('dragover'); }));
+    dropzone.addEventListener('drop', e => addFiles(e.dataTransfer && e.dataTransfer.files));
+
+    // Turnstile (only when a site key is configured)
+    if (PQ_TURNSTILE_SITE_KEY) {
+      window.pqTurnstileReady = function () {
+        turnstileWidgetId = window.turnstile.render('#pqTurnstile', { sitekey: PQ_TURNSTILE_SITE_KEY, theme: 'light' });
+      };
+      const s = document.createElement('script');
+      s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=pqTurnstileReady';
+      s.async = true; s.defer = true;
+      document.head.appendChild(s);
+    }
+
+    function setBusy(busy) {
+      submitBtn.disabled = busy;
+      progress.classList.toggle('active', busy);
+      if (!busy) progressBar.style.width = '0';
+    }
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      setMsg('');
+      const name = document.getElementById('pqName').value.trim();
+      const phoneRaw = document.getElementById('pqPhone').value;
+      const phone = normalizePhone(phoneRaw);
+
+      if (name.length < 2) return setMsg(t('Please enter your name.', 'براہِ کرم اپنا نام درج کریں۔'), true);
+      if (!phone) return setMsg(t('Please enter a valid WhatsApp number, e.g. 0318 1234567.', 'براہِ کرم درست واٹس ایپ نمبر درج کریں، مثلاً 0318 1234567۔'), true);
+      if (processing) return setMsg(t('Please wait, photos are still being prepared.', 'براہِ کرم انتظار کریں، تصاویر تیار ہو رہی ہیں۔'), true);
+      if (!photos.length) return setMsg(t('Please add at least one photo.', 'براہِ کرم کم از کم ایک تصویر شامل کریں۔'), true);
+
+      let token = '';
+      if (PQ_TURNSTILE_SITE_KEY) {
+        token = (window.turnstile && turnstileWidgetId !== null) ? window.turnstile.getResponse(turnstileWidgetId) : '';
+        if (!token) return setMsg(t('Please complete the security check.', 'براہِ کرم سکیورٹی چیک مکمل کریں۔'), true);
+      }
+
+      const fd = new FormData();
+      fd.append('name', name);
+      fd.append('phone', phone);
+      fd.append('lang', isUr() ? 'ur' : 'en');
+      fd.append('website', document.getElementById('pqWebsite').value);
+      if (token) fd.append('cf-turnstile-response', token);
+      photos.forEach((p, i) => fd.append('photos', p.blob, `photo-${i + 1}.jpg`));
+
+      setBusy(true);
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', '/api/quote-upload');
+      xhr.upload.onprogress = ev => { if (ev.lengthComputable) progressBar.style.width = Math.round(ev.loaded / ev.total * 100) + '%'; };
+      xhr.onload = () => {
+        let data = null;
+        try { data = JSON.parse(xhr.responseText); } catch (err) { /* non-JSON */ }
+        setBusy(false);
+        if (xhr.status >= 200 && xhr.status < 300 && data && data.ok) {
+          showSuccess(data.id, name);
+        } else {
+          setMsg((data && data.error) || t('Upload failed. Please try again or send photos on WhatsApp.', 'اپ لوڈ ناکام رہا۔ دوبارہ کوشش کریں یا واٹس ایپ پر تصاویر بھیجیں۔'), true);
+          if (PQ_TURNSTILE_SITE_KEY && window.turnstile) window.turnstile.reset(turnstileWidgetId);
+        }
+      };
+      xhr.onerror = () => {
+        setBusy(false);
+        setMsg(t('Network error. Please check your connection and try again.', 'نیٹ ورک کا مسئلہ۔ کنکشن چیک کر کے دوبارہ کوشش کریں۔'), true);
+      };
+      xhr.send(fd);
+    });
+
+    function showSuccess(id, name) {
+      document.getElementById('pqRef').textContent = id;
+      const msg = t(
+        `Hi FurniSwap! I just uploaded photos of my furniture for a quote. Reference: ${id}. Name: ${name}`,
+        `السلام علیکم فرنی سواپ! میں نے قیمت کے لیے اپنے فرنیچر کی تصاویر اپ لوڈ کی ہیں۔ ریفرنس: ${id}۔ نام: ${name}`
+      );
+      document.getElementById('pqWaLink').href = `https://wa.me/${PQ_WA_NUMBER}?text=${encodeURIComponent(msg)}`;
+      form.style.display = 'none';
+      successEl.classList.add('active');
+      successEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    window.pqReset = function () {
+      photos.forEach(p => URL.revokeObjectURL(p.url));
+      photos = [];
+      render();
+      setMsg('');
+      successEl.classList.remove('active');
+      form.style.display = '';
+      if (PQ_TURNSTILE_SITE_KEY && window.turnstile) window.turnstile.reset(turnstileWidgetId);
+    };
+  })();
   </script>
 </body>
 </html>
