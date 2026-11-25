@@ -102,7 +102,14 @@ export async function onRequestPost({ request, env }) {
     return json(200, null, { ok: true, id });
   } catch (err) {
     console.error('quote-upload failed:', err && err.stack ? err.stack : err);
-    return json(500, 'Something went wrong while saving your photos. Please try again or send them on WhatsApp.');
+    // Short, non-sensitive failure code (e.g. "google_auth:invalid_grant", "drive:403")
+    // so problems can be diagnosed from the browser's network tab.
+    const code = (err && err.code) || 'internal';
+    return json(500, null, {
+      ok: false,
+      error: 'Something went wrong while saving your photos. Please try again or send them on WhatsApp.',
+      code,
+    });
   }
 }
 
@@ -174,7 +181,9 @@ async function getAccessToken(env) {
   });
   const data = await res.json().catch(() => ({}));
   if (!res.ok || !data.access_token) {
-    throw new Error(`Google token exchange failed (${res.status}): ${data.error || ''} ${data.error_description || ''}`);
+    const err = new Error(`Google token exchange failed (${res.status}): ${data.error || ''} ${data.error_description || ''}`);
+    err.code = `google_auth:${String(data.error || res.status).replace(/[^a-z0-9_]/gi, '')}`;
+    throw err;
   }
   cachedToken = { value: data.access_token, expiresAt: Date.now() + (data.expires_in || 3600) * 1000 };
   return cachedToken.value;
@@ -227,7 +236,10 @@ async function driveJson(res, what) {
   const data = await res.json().catch(() => ({}));
   if (!res.ok) {
     const msg = data.error && data.error.message ? data.error.message : res.statusText;
-    throw new Error(`Google Drive ${what} failed (${res.status}): ${msg}`);
+    const err = new Error(`Google Drive ${what} failed (${res.status}): ${msg}`);
+    const reason = data.error && data.error.errors && data.error.errors[0] && data.error.errors[0].reason;
+    err.code = `drive:${res.status}${reason ? ':' + String(reason).replace(/[^a-z0-9_]/gi, '') : ''}`;
+    throw err;
   }
   return data;
 }
