@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Quote Review | FurniSwap Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --cream: #F5EFE6;
+      --cream-alt: #FAF7F2;
+      --ink: #1A1A1A;
+      --muted: #666666;
+      --line: rgba(26, 26, 26, 0.10);
+      --card: #FFFFFF;
+      --terracotta: #C45C2A;
+      --terracotta-soft: rgba(196, 92, 42, 0.10);
+      --sage: #4A6741;
+      --sage-soft: rgba(74, 103, 65, 0.12);
+      --gold: #9A6B12;
+      --gold-soft: rgba(217, 155, 38, 0.15);
+      --red: #A33A2A;
+      --red-soft: rgba(163, 58, 42, 0.10);
+      --radius: 12px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--cream);
+      color: var(--ink);
+      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 14.5px;
+      line-height: 1.5;
+    }
+    header {
+      background: var(--card);
+      border-bottom: 1px solid var(--line);
+      padding: 12px 16px;
+      position: sticky; top: 0; z-index: 5;
+    }
+    .bar { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .bar img { height: 30px; width: auto; }
+    .bar h1 { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 24px; margin: 0; flex: 1; }
+    .who { font-size: 12.5px; color: var(--muted); }
+    main { max-width: 1200px; margin: 0 auto; padding: 20px 16px 60px; }
+    .tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+    .tab {
+      border: 1px solid var(--line); background: var(--card); border-radius: 999px;
+      padding: 6px 14px; font: inherit; font-size: 13px; cursor: pointer; color: var(--ink);
+    }
+    .tab[aria-pressed="true"] { background: var(--ink); color: #fff; border-color: var(--ink); }
+    .tab .n { opacity: 0.65; margin-left: 4px; }
+    .notice { background: var(--gold-soft); border-radius: var(--radius); padding: 10px 14px; margin-bottom: 14px; font-size: 13.5px; }
+    .notice.err { background: var(--red-soft); color: var(--red); }
+    .list { display: grid; gap: 10px; }
+    .row {
+      background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+      padding: 12px 14px; display: grid; grid-template-columns: 1fr auto; gap: 6px 14px;
+      cursor: pointer; text-align: left; font: inherit; color: inherit; width: 100%;
+    }
+    .row:hover, .row:focus-visible { border-color: var(--terracotta); outline: none; }
+    .row .id { font-family: ui-monospace, Consolas, monospace; font-size: 12.5px; color: var(--muted); }
+    .row .name { font-weight: 600; }
+    .row .range { font-weight: 700; text-align: right; white-space: nowrap; }
+    .row .meta { grid-column: 1 / -1; display: flex; gap: 6px; flex-wrap: wrap; align-items: center; font-size: 12.5px; color: var(--muted); }
+    .pill { display: inline-block; border-radius: 999px; padding: 2px 9px; font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px; }
+    .st-new, .st-pricing { background: var(--gold-soft); color: var(--gold); }
+    .st-priced { background: var(--terracotta-soft); color: var(--terracotta); }
+    .st-approved, .st-sent { background: var(--sage-soft); color: var(--sage); }
+    .st-failed, .st-stalled { background: var(--red-soft); color: var(--red); }
+    .flag { background: #EFE8DE; color: #5C4033; border-radius: 6px; padding: 1px 7px; font-size: 11.5px; }
+    .empty { text-align: center; color: var(--muted); padding: 40px 0; }
+
+    /* Detail drawer */
+    .drawer-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.35); display: none; z-index: 10; }
+    .drawer-bg.open { display: block; }
+    .drawer {
+      position: fixed; top: 0; right: 0; bottom: 0; width: min(760px, 100%);
+      background: var(--cream-alt); overflow-y: auto; z-index: 11; transform: translateX(100%);
+      transition: transform 0.2s ease; box-shadow: -10px 0 30px rgba(0,0,0,0.12);
+    }
+    .drawer.open { transform: none; }
+    .drawer-head { position: sticky; top: 0; background: var(--card); border-bottom: 1px solid var(--line); padding: 12px 16px; display: flex; align-items: center; gap: 10px; z-index: 1; }
+    .drawer-head h2 { margin: 0; font-size: 17px; flex: 1; }
+    .close { border: none; background: none; font-size: 26px; line-height: 1; cursor: pointer; color: var(--muted); }
+    .drawer-body { padding: 16px; display: grid; gap: 14px; }
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; }
+    .card h3 { margin: 0 0 8px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.6px; color: var(--muted); }
+    .photos { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; }
+    .photos a { display: block; border-radius: 8px; overflow: hidden; background: #ddd; aspect-ratio: 4 / 3; }
+    .photos img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    dl.kv { display: grid; grid-template-columns: 150px 1fr; gap: 6px 12px; margin: 0; }
+    dl.kv dt { color: var(--muted); }
+    dl.kv dd { margin: 0; }
+    .conf { font-size: 11.5px; color: var(--muted); margin-left: 6px; }
+    .conf.low { color: var(--red); font-weight: 700; }
+    .big { font-size: 22px; font-weight: 700; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { text-align: left; padding: 6px 6px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    th { color: var(--muted); font-weight: 600; font-size: 12px; }
+    td.num { text-align: right; white-space: nowrap; }
+    a { color: var(--terracotta); }
+    label.f { display: block; font-size: 12.5px; font-weight: 600; margin: 10px 0 4px; }
+    input[type=number], textarea {
+      width: 100%; padding: 9px 11px; border: 1.5px solid var(--line); border-radius: 8px;
+      font: inherit; background: #fff;
+    }
+    input:focus, textarea:focus { outline: none; border-color: var(--terracotta); box-shadow: 0 0 0 3px var(--terracotta-soft); }
+    .actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+    .btn {
+      border: none; border-radius: 8px; padding: 9px 16px; font: inherit; font-weight: 700; cursor: pointer;
+      background: var(--terracotta); color: #fff;
+    }
+    .btn.secondary { background: #fff; color: var(--ink); border: 1px solid var(--line); }
+    .btn.green { background: #1F8B4C; }
+    .btn[disabled] { opacity: 0.5; cursor: not-allowed; }
+    .hint { font-size: 12.5px; color: var(--muted); }
+    @media (max-width: 600px) {
+      dl.kv { grid-template-columns: 1fr; gap: 0 0; }
+      dl.kv dd { margin-bottom: 8px; }
+      .bar h1 { font-size: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="bar">
+      <a href="/" aria-label="FurniSwap home"><img src="resources/furniswap-brand-logo-full-horizontal.png" alt="FurniSwap"></a>
+      <h1>Quote Review</h1>
+      <span class="who" id="who"></span>
+      <button class="btn secondary" id="refreshBtn" type="button">Refresh</button>
+    </div>
+  </header>
+
+  <main>
+    <div id="notice"></div>
+    <div class="tabs" role="group" aria-label="Filter by status" id="tabs"></div>
+    <div class="list" id="list"><div class="empty">Loading…</div></div>
+  </main>
+
+  <div class="drawer-bg" id="drawerBg"></div>
+  <aside class="drawer" id="drawer" aria-hidden="true">
+    <div class="drawer-head">
+      <h2 id="dTitle">Submission</h2>
+      <button class="close" id="dClose" type="button" aria-label="Close">&times;</button>
+    </div>
+    <div class="drawer-body" id="dBody"></div>
+  </aside>
+
+  <script>
+  (function () {
+    const TABS = [
+      { key: 'review', label: 'To review', match: s => ['new', 'pricing', 'priced', 'failed', 'stalled'].includes(s) },
+      { key: 'approved', label: 'Approved', match: s => s === 'approved' },
+      { key: 'sent', label: 'Sent', match: s => s === 'sent' },
+      { key: 'all', label: 'All', match: () => true },
+    ];
+    const FLAG_TEXT = {
+      low_market_data: 'Fewer than 3 OLX matches: no market cap',
+      needs_human_look: 'AI unsure about type or condition',
+      material_uncertain: 'Material uncertain',
+      age_assumed: 'Age not visible: 3–5 yrs assumed',
+      photo_issues: 'Photo problems',
+      olx_cap_applied: 'Capped by OLX prices',
+    };
+    const STATUS_TEXT = { new: 'Waiting for AI', pricing: 'AI working', priced: 'Ready to review', failed: 'AI failed', stalled: 'AI stalled', approved: 'Approved', sent: 'Sent' };
+
+    let items = [];
+    let tab = 'review';
+    let aiEnabled = false;
+    let autoPricing = false;
+    const $ = id => document.getElementById(id);
+
+    const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const rs = n => (n == null || !isFinite(n)) ? '—' : 'Rs ' + Math.round(n).toLocaleString('en-PK');
+    const safeUrl = u => /^https?:\/\//i.test(String(u || '')) ? String(u) : null;
+    const fmtDate = t => t ? new Date(t).toLocaleString('en-PK', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : '';
+
+    async function api(path, opts) {
+      const res = await fetch(path, Object.assign({ credentials: 'same-origin', headers: { 'Content-Type': 'application/json' } }, opts || {}));
+      let data = null;
+      try { data = await res.json(); } catch (e) { /* non-JSON */ }
+      if (!res.ok || !data || data.ok === false) {
+        const err = new Error((data && data.error) || `Request failed (${res.status})`);
+        err.status = res.status; err.code = data && data.code;
+        throw err;
+      }
+      return data;
+    }
+
+    function notice(msg, isErr) {
+      $('notice').innerHTML = msg ? `<div class="notice${isErr ? ' err' : ''}">${esc(msg)}</div>` : '';
+    }
+
+    async function load() {
+      try {
+        const data = await api('/api/admin/submissions');
+        items = data.items;
+        aiEnabled = data.aiEnabled;
+        $('who').textContent = data.admin || '';
+        notice(aiEnabled ? '' : 'AI pricing is off: ANTHROPIC_API_KEY is not set in Cloudflare.', !aiEnabled);
+        render();
+        autoPrice();
+      } catch (err) {
+        $('list').innerHTML = '';
+        notice(err.status === 401 || err.status === 403 ? `${err.message} Reload the page to log in again.` : err.message, true);
+      }
+    }
+
+    function render() {
+      $('tabs').innerHTML = TABS.map(t => {
+        const n = items.filter(i => t.match(i.status)).length;
+        return `<button class="tab" type="button" data-tab="${t.key}" aria-pressed="${t.key === tab}">${esc(t.label)}<span class="n">${n}</span></button>`;
+      }).join('');
+      const t = TABS.find(x => x.key === tab);
+      const rows = items.filter(i => t.match(i.status));
+      $('list').innerHTML = rows.length ? rows.map(i => `
+        <button class="row" type="button" data-folder="${esc(i.folderId)}">
+          <div><div class="name">${esc(i.customerName || 'Customer')}</div><div class="id">${esc(i.id)} · ${esc(fmtDate(i.createdTime))}</div></div>
+          <div class="range">${i.finalCredit != null ? rs(i.finalCredit) : (i.minCredit != null ? `${rs(i.minCredit)} – ${rs(i.maxCredit).replace('Rs ', '')}` : '—')}</div>
+          <div class="meta">
+            <span class="pill st-${esc(i.status)}">${esc(STATUS_TEXT[i.status] || i.status)}</span>
+            ${i.typeKey ? `<span>${esc(i.typeKey)}</span>` : ''}
+            ${(i.flags || []).map(f => `<span class="flag">${esc(FLAG_TEXT[f] || f)}</span>`).join('')}
+            ${i.error ? `<span class="flag">${esc(i.error)}</span>` : ''}
+          </div>
+        </button>`).join('') : '<div class="empty">Nothing here.</div>';
+    }
+
+    // Price anything the background step didn't finish, one at a time.
+    async function autoPrice() {
+      if (!aiEnabled || autoPricing) return;
+      const todo = items.filter(i => i.status === 'new' || i.status === 'stalled');
+      if (!todo.length) return;
+      autoPricing = true;
+      for (const i of todo) {
+        i.status = 'pricing'; render();
+        try { await api(`/api/admin/submissions/${encodeURIComponent(i.folderId)}`, { method: 'POST', body: JSON.stringify({ action: 'price', force: true }) }); }
+        catch (e) { /* recorded on the submission */ }
+      }
+      autoPricing = false;
+      await load();
+    }
+
+    $('tabs').addEventListener('click', e => {
+      const b = e.target.closest('[data-tab]');
+      if (b) { tab = b.dataset.tab; render(); }
+    });
+    $('list').addEventListener('click', e => {
+      const b = e.target.closest('[data-folder]');
+      if (b) openDetail(b.dataset.folder);
+    });
+    $('refreshBtn').addEventListener('click', load);
+
+    // ------------------------------------------------------------ detail
+    let current = null;
+
+    function openDrawer() { $('drawer').classList.add('open'); $('drawerBg').classList.add('open'); $('drawer').setAttribute('aria-hidden', 'false'); }
+    function closeDrawer() { $('drawer').classList.remove('open'); $('drawerBg').classList.remove('open'); $('drawer').setAttribute('aria-hidden', 'true'); current = null; }
+    $('dClose').addEventListener('click', closeDrawer);
+    $('drawerBg').addEventListener('click', closeDrawer);
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawer(); });
+
+    async function openDetail(folderId) {
+      openDrawer();
+      $('dTitle').textContent = 'Loading…';
+      $('dBody').innerHTML = '';
+      try {
+        current = await api(`/api/admin/submissions/${encodeURIComponent(folderId)}`);
+        renderDetail();
+      } catch (err) {
+        $('dBody').innerHTML = `<div class="notice err">${esc(err.message)}</div>`;
+      }
+    }
+
+    function conf(c) { return c ? `<span class="conf ${c === 'low' ? 'low' : ''}">${esc(c)} confidence</span>` : ''; }
+
+    function renderDetail() {
+      const { submission: s, quote: q, review: r, labels, status, error } = current;
+      const a = q && q.assessment;
+      const c = q && q.credit;
+      $('dTitle').textContent = `${s ? s.id : ''} · ${s ? s.customer.name : ''}`;
+
+      const photos = (s && s.photos || []).map(p => `<a href="/api/admin/photo/${encodeURIComponent(p.fileId)}" target="_blank" rel="noopener"><img src="/api/admin/photo/${encodeURIComponent(p.fileId)}" alt="${esc(p.name)}" loading="lazy"></a>`).join('');
+
+      const suggested = r && r.finalCredit != null ? r.finalCredit : (c ? Math.round((c.minCredit + c.maxCredit) / 2 / 500) * 500 : '');
+
+      const comps = (q && q.comparables || []).map(x => {
+        const url = safeUrl(x.url);
+        return `<tr><td>${esc(x.source)}<br><span class="hint">${esc(x.listingType)}</span></td><td>${url ? `<a href="${esc(url)}" target="_blank" rel="noopener noreferrer">${esc(x.title)}</a>` : esc(x.title)}</td><td class="num">${rs(x.priceRs)}</td><td>${esc(x.similarity)}</td></tr>`;
+      }).join('');
+
+      const olxSearch = a && a.searchQuery ? `https://www.olx.com.pk/items/q-${encodeURIComponent(a.searchQuery.trim().replace(/\s+/g, '-'))}` : null;
+
+      $('dBody').innerHTML = `
+        <div class="card">
+          <h3>Customer</h3>
+          <dl class="kv">
+            <dt>Name</dt><dd>${esc(s && s.customer.name)}</dd>
+            <dt>WhatsApp</dt><dd>${s ? `<a href="https://wa.me/${esc(s.customer.whatsapp)}" target="_blank" rel="noopener">+${esc(s.customer.whatsapp)}</a>` : ''}</dd>
+            <dt>Received</dt><dd>${esc(fmtDate(s && s.createdAt))} · language: ${esc(s && s.lang === 'ur' ? 'Urdu' : 'English')}</dd>
+            <dt>Status</dt><dd><span class="pill st-${esc(status)}">${esc(STATUS_TEXT[status] || status)}</span>${error ? ` <span class="hint">${esc(error)}</span>` : ''}</dd>
+          </dl>
+        </div>
+
+        <div class="card"><h3>Photos</h3><div class="photos">${photos || '<span class="hint">No photos</span>'}</div></div>
+
+        ${q ? `
+        <div class="card">
+          <h3>AI assessment</h3>
+          <p style="margin:0 0 10px;">${esc(a.itemDescription)}</p>
+          <dl class="kv">
+            <dt>Type</dt><dd>${esc(labels.types[a.typeKey] || a.typeKey)}${conf(a.typeConfidence)}</dd>
+            <dt>Material</dt><dd>${esc(a.materialKey)}${conf(a.materialConfidence)}</dd>
+            <dt>Condition</dt><dd>${esc(labels.conditions[a.conditionKey] || a.conditionKey)}${conf(a.conditionConfidence)}<br><span class="hint">${esc(a.conditionNotes)}</span></dd>
+            <dt>Age</dt><dd>${esc(a.ageKey === 'unknown' ? `unknown (using ${a.ageKeyUsed} yrs)` : a.ageKey + ' yrs')}</dd>
+            ${a.photoIssues ? `<dt>Photo issues</dt><dd>${esc(a.photoIssues)}</dd>` : ''}
+          </dl>
+          <div style="margin-top:10px;">${(q.flags || []).map(f => `<span class="flag">${esc(FLAG_TEXT[f] || f)}</span>`).join(' ')}</div>
+        </div>
+
+        <div class="card">
+          <h3>Calculation</h3>
+          <dl class="kv">
+            <dt>Benchmark</dt><dd>${rs(c.benchmark)}</dd>
+            <dt>× Age</dt><dd>${esc(c.ageFactor)}</dd>
+            <dt>× Material</dt><dd>${esc(c.materialFactor)}</dd>
+            <dt>× Condition</dt><dd>${esc(Math.round(c.conditionRate.min * 100))}–${esc(Math.round(c.conditionRate.max * 100))}%</dd>
+            <dt>OLX used median</dt><dd>${c.olx.median ? `${rs(c.olx.median)} from ${esc(c.olx.count)} listings · cap ${esc(c.olx.capPct)}% = ${rs(c.olx.cap)}${c.olx.applied ? ' (applied)' : ''}` : `not enough matches (${esc(c.olx.count)})`}</dd>
+            <dt>Credit range</dt><dd class="big">${rs(c.minCredit)} – ${rs(c.maxCredit).replace('Rs ', '')}</dd>
+          </dl>
+        </div>
+
+        <div class="card">
+          <h3>Comparable listings</h3>
+          ${comps ? `<table><thead><tr><th>Source</th><th>Listing</th><th class="num">Price</th><th>Match</th></tr></thead><tbody>${comps}</tbody></table>` : '<p class="hint" style="margin:0;">No priced listings found.</p>'}
+          ${olxSearch ? `<p class="hint" style="margin:10px 0 0;">Check yourself: <a href="${esc(olxSearch)}" target="_blank" rel="noopener noreferrer">search OLX for “${esc(a.searchQuery)}”</a></p>` : ''}
+          <p class="hint" style="margin:6px 0 0;">${esc(q.model)} · ${esc(q.usage && q.usage.webSearches)} searches · priced ${esc(fmtDate(q.pricedAt))}</p>
+        </div>` : `
+        <div class="card"><h3>AI assessment</h3><p class="hint" style="margin:0;">${status === 'pricing' ? 'The AI is working on this one…' : 'Not priced yet.'}</p></div>`}
+
+        <div class="card">
+          <h3>Decision</h3>
+          <label class="f" for="dCredit">Final credit (Rs)</label>
+          <input type="number" id="dCredit" min="0" step="500" value="${esc(suggested)}" inputmode="numeric">
+          <label class="f" for="dNote">Note for the team (optional)</label>
+          <textarea id="dNote" rows="2">${esc(r && r.note)}</textarea>
+          <div class="actions">
+            <button class="btn" type="button" id="dApprove">${status === 'approved' || status === 'sent' ? 'Update approval' : 'Approve'}</button>
+            <button class="btn green" type="button" id="dWhatsApp" ${status === 'approved' || status === 'sent' ? '' : 'disabled'}>Send on WhatsApp</button>
+            <button class="btn secondary" type="button" id="dPrice" ${aiEnabled ? '' : 'disabled'}>${q ? 'Re-run AI' : 'Run AI'}</button>
+          </div>
+          <p class="hint" id="dMsg" role="status" style="margin:8px 0 0;">${r && r.approvedBy ? `Approved by ${esc(r.approvedBy)} · ${esc(fmtDate(r.approvedAt))}` : ''}${r && r.sentAt ? ` · sent ${esc(fmtDate(r.sentAt))}` : ''}</p>
+        </div>`;
+
+      $('dApprove').addEventListener('click', approve);
+      $('dWhatsApp').addEventListener('click', sendWhatsApp);
+      $('dPrice').addEventListener('click', rerun);
+    }
+
+    function setBusy(on, msg) {
+      const approved = current && ['approved', 'sent'].includes(current.status);
+      if ($('dApprove')) $('dApprove').disabled = on;
+      if ($('dPrice')) $('dPrice').disabled = on || !aiEnabled;
+      if ($('dWhatsApp')) $('dWhatsApp').disabled = on || !approved;
+      if (msg != null) $('dMsg').textContent = msg;
+    }
+
+    async function approve() {
+      const credit = Number($('dCredit').value);
+      if (!isFinite(credit) || credit < 0) { $('dMsg').textContent = 'Enter a valid credit amount.'; return; }
+      setBusy(true, 'Saving…');
+      try {
+        await api(`/api/admin/submissions/${encodeURIComponent(current.folderId)}`, { method: 'POST', body: JSON.stringify({ action: 'approve', finalCredit: credit, note: $('dNote').value }) });
+        await openDetail(current.folderId);
+        load();
+      } catch (err) { setBusy(false, err.message); }
+    }
+
+    async function rerun() {
+      if (!confirmRerun()) return;
+      setBusy(true, 'AI is assessing the photos (about 30–60 seconds)…');
+      try {
+        await api(`/api/admin/submissions/${encodeURIComponent(current.folderId)}`, { method: 'POST', body: JSON.stringify({ action: 'price', force: true }) });
+        await openDetail(current.folderId);
+        load();
+      } catch (err) { setBusy(false, err.message); }
+    }
+
+    function confirmRerun() {
+      return !current.review || !current.review.approvedAt || window.confirm('This quote is already approved. Run the AI again?');
+    }
+
+    function quoteMessage() {
+      const s = current.submission;
+      const r = current.review;
+      const credit = Math.round(r.finalCredit).toLocaleString('en-PK');
+      if (s.lang === 'ur') {
+        return `السلام علیکم ${s.customer.name}! فرنی سواپ پر تصاویر بھیجنے کا شکریہ۔\nآپ کے فرنیچر (ریفرنس ${s.id}) کا سویپ کریڈٹ: Rs ${credit}\nیہ کریڈٹ کسی بھی نئے فرنیچر کی قیمت سے منہا ہو جائے گا۔ پک اپ اور ڈیلیوری مفت ہے۔ آگے بڑھنے کے لیے جواب دیں!`;
+      }
+      return `Hi ${s.customer.name}, thanks for sending your photos to FurniSwap!\nSwap credit for your furniture (ref ${s.id}): Rs ${credit}\nThis credit comes off the price of any new furniture you choose, with free pickup and delivery. Reply here to go ahead!`;
+    }
+
+    async function sendWhatsApp() {
+      if (!current.review || current.review.finalCredit == null) return;
+      const s = current.submission;
+      window.open(`https://wa.me/${encodeURIComponent(s.customer.whatsapp)}?text=${encodeURIComponent(quoteMessage())}`, '_blank', 'noopener');
+      try {
+        await api(`/api/admin/submissions/${encodeURIComponent(current.folderId)}`, { method: 'POST', body: JSON.stringify({ action: 'sent' }) });
+        await openDetail(current.folderId);
+        load();
+      } catch (err) { $('dMsg').textContent = err.message; }
+    }
+
+    load();
+  })();
+  </script>
+</body>
+</html>

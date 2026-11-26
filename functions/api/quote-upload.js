@@ -2,7 +2,8 @@
 //
 // Receives the photo-quote form (name, phone, compressed photos), creates a
 // folder per submission in Google Drive and stores the photos plus a
-// submission.json there. Phase 2 (AI pricing) will read these folders.
+// submission.json there. Then starts AI pricing in the background
+// (functions/_lib/pricing.js); if that doesn't finish, the admin page retries it.
 //
 // Environment variables (Cloudflare Pages → Settings → Variables and Secrets):
 //   GOOGLE_CLIENT_ID       OAuth client ID          (required)
@@ -11,18 +12,19 @@
 //   DRIVE_ROOT_FOLDER_ID   optional; if unset, a "FurniSwap Quotes" folder is
 //                          found or created in the account's My Drive
 //   TURNSTILE_SECRET       optional; when set, a valid Turnstile token is required
+//   ANTHROPIC_API_KEY      optional; when set, uploads are priced automatically
+
+import {
+  FOLDER_MIME, hasGoogleCredentials, getAccessToken, getRootFolderId, driveCreate, driveUpload,
+} from '../_lib/drive.js';
+import { priceSubmission } from '../_lib/pricing.js';
 
 const MAX_PHOTOS = 6;
 const MAX_PHOTO_BYTES = 1.5 * 1024 * 1024; // browser compresses to ~400KB
-const ROOT_FOLDER_NAME = 'FurniSwap Quotes';
-const FOLDER_MIME = 'application/vnd.google-apps.folder';
 
-let cachedRootFolderId = null;
-let cachedToken = null; // { value, expiresAt }
-
-export async function onRequestPost({ request, env }) {
+export async function onRequestPost({ request, env, waitUntil }) {
   try {
-    if (!env.GOOGLE_CLIENT_ID || !env.GOOGLE_CLIENT_SECRET || !env.GOOGLE_REFRESH_TOKEN) {
+    if (!hasGoogleCredentials(env)) {
       console.error('quote-upload: Google credentials are not configured');
       return json(503, 'Photo upload is not available yet. Please send your photos on WhatsApp.');
     }
@@ -72,7 +74,12 @@ export async function onRequestPost({ request, env }) {
     const createdAt = new Date().toISOString();
     const token = await getAccessToken(env);
     const rootId = await getRootFolderId(env, token);
-    const folder = await driveCreate(token, { name: `${id} - ${name}`, mimeType: FOLDER_MIME, parents: [rootId] });
+    const folder = await driveCreate(token, {
+      name: `${id} - ${name}`,
+      mimeType: FOLDER_MIME,
+      parents: [rootId],
+      appProperties: { fsId: id, status: 'new' },
+    });
 
     const uploaded = [];
     for (let i = 0; i < photos.length; i++) {
@@ -98,6 +105,12 @@ export async function onRequestPost({ request, env }) {
       'application/json',
       new TextEncoder().encode(JSON.stringify(submission, null, 2)),
     );
+
+    // Price in the background; the customer doesn't wait for it. Failures are
+    // recorded on the folder and retried from the admin page.
+    if (env.ANTHROPIC_API_KEY && typeof waitUntil === 'function') {
+      waitUntil(priceSubmission(env, folder.id).catch(() => {}));
+    }
 
     return json(200, null, { ok: true, id });
   } catch (err) {
@@ -165,81 +178,4 @@ async function verifyTurnstile(secret, token, ip) {
   const res = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', { method: 'POST', body });
   const data = await res.json().catch(() => ({}));
   return data.success === true;
-}
-
-async function getAccessToken(env) {
-  if (cachedToken && cachedToken.expiresAt > Date.now() + 60_000) return cachedToken.value;
-  const res = await fetch('https://oauth2.googleapis.com/token', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({
-      client_id: env.GOOGLE_CLIENT_ID,
-      client_secret: env.GOOGLE_CLIENT_SECRET,
-      refresh_token: env.GOOGLE_REFRESH_TOKEN,
-      grant_type: 'refresh_token',
-    }),
-  });
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok || !data.access_token) {
-    const err = new Error(`Google token exchange failed (${res.status}): ${data.error || ''} ${data.error_description || ''}`);
-    err.code = `google_auth:${String(data.error || res.status).replace(/[^a-z0-9_]/gi, '')}`;
-    throw err;
-  }
-  cachedToken = { value: data.access_token, expiresAt: Date.now() + (data.expires_in || 3600) * 1000 };
-  return cachedToken.value;
-}
-
-async function getRootFolderId(env, token) {
-  if (env.DRIVE_ROOT_FOLDER_ID) return env.DRIVE_ROOT_FOLDER_ID;
-  if (cachedRootFolderId) return cachedRootFolderId;
-
-  const q = `name = '${ROOT_FOLDER_NAME}' and mimeType = '${FOLDER_MIME}' and 'root' in parents and trashed = false`;
-  const res = await fetch(`https://www.googleapis.com/drive/v3/files?${new URLSearchParams({ q, fields: 'files(id)', pageSize: '1' })}`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  const data = await driveJson(res, 'find root folder');
-  if (data.files && data.files.length) {
-    cachedRootFolderId = data.files[0].id;
-  } else {
-    cachedRootFolderId = (await driveCreate(token, { name: ROOT_FOLDER_NAME, mimeType: FOLDER_MIME })).id;
-  }
-  return cachedRootFolderId;
-}
-
-async function driveCreate(token, metadata) {
-  const res = await fetch('https://www.googleapis.com/drive/v3/files?fields=id', {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify(metadata),
-  });
-  return driveJson(res, `create "${metadata.name}"`);
-}
-
-// Multipart upload (metadata + content in one request); fine for files < 5MB.
-async function driveUpload(token, metadata, mimeType, bytes) {
-  const boundary = 'fs' + crypto.randomUUID().replace(/-/g, '');
-  const body = new Blob([
-    `--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${JSON.stringify(metadata)}\r\n`,
-    `--${boundary}\r\nContent-Type: ${mimeType}\r\n\r\n`,
-    bytes,
-    `\r\n--${boundary}--`,
-  ]);
-  const res = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id', {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${token}`, 'Content-Type': `multipart/related; boundary=${boundary}` },
-    body,
-  });
-  return driveJson(res, `upload "${metadata.name}"`);
-}
-
-async function driveJson(res, what) {
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) {
-    const msg = data.error && data.error.message ? data.error.message : res.statusText;
-    const err = new Error(`Google Drive ${what} failed (${res.status}): ${msg}`);
-    const reason = data.error && data.error.errors && data.error.errors[0] && data.error.errors[0].reason;
-    err.code = `drive:${res.status}${reason ? ':' + String(reason).replace(/[^a-z0-9_]/gi, '') : ''}`;
-    throw err;
-  }
-  return data;
 }
