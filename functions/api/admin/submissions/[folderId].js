@@ -65,7 +65,7 @@ export async function onRequestPost({ request, env, params, data }) {
       return adminJson(200, { ok: true, quote });
     } catch (err) {
       const code = err.code || 'internal';
-      const status = code === 'busy' || code === 'already_approved' ? 409 : code === 'ai:not_configured' ? 503 : 502;
+      const status = code === 'busy' || code === 'already_approved' ? 409 : code === 'ai:not_configured' ? 503 : code === 'ai:quota' ? 429 : 502;
       return adminJson(status, { ok: false, error: err.message, code });
     }
   }

@@ -2,8 +2,5 @@
   "name": "furniswap-website",
   "private": true,
   "description": "FurniSwap website (static pages + Cloudflare Pages Functions)",
-  "type": "module",
-  "dependencies": {
-    "@anthropic-ai/sdk": "^0.136.0"
-  }
+  "type": "module"
 }

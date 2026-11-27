@@ -12,14 +12,14 @@
 //   DRIVE_ROOT_FOLDER_ID   optional; if unset, a "FurniSwap Quotes" folder is
 //                          found or created in the account's My Drive
 //   TURNSTILE_SECRET       optional; when set, a valid Turnstile token is required
-//   ANTHROPIC_API_KEY      optional; when set, uploads are priced automatically
+//   AI (binding)           optional Workers AI binding; when set, uploads are priced automatically
 //   NOTIFY_EMAIL_TO, CF_ACCOUNT_ID, CF_EMAIL_API_TOKEN
 //                          optional; when set, each upload emails the owner (see _lib/notify.js)
 
 import {
   FOLDER_MIME, hasGoogleCredentials, getAccessToken, getRootFolderId, driveCreate, driveUpload,
 } from '../_lib/drive.js';
-import { priceSubmission } from '../_lib/pricing.js';
+import { aiEnabled, priceSubmission } from '../_lib/pricing.js';
 import { sendUploadNotification } from '../_lib/notify.js';
 
 const MAX_PHOTOS = 6;
@@ -116,7 +116,7 @@ export async function onRequestPost({ request, env, waitUntil }) {
 
     // Price in the background; the customer doesn't wait for it. Failures are
     // recorded on the folder and retried from the admin page.
-    if (env.ANTHROPIC_API_KEY && typeof waitUntil === 'function') {
+    if (aiEnabled(env) && typeof waitUntil === 'function') {
       waitUntil(priceSubmission(env, folder.id).catch(() => {}));
     }
 
