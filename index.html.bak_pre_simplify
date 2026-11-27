@@ -6256,7 +6256,6 @@
           <button type="submit" class="btn-primary" style="width:100%; justify-content:center;">
             <span>Unlock Admin Portal &rarr;</span>
           </button>
-          <div style="font-size:11px; color:var(--charcoal-muted); margin-top:12px;">Default passcode: <strong>admin123</strong> or <strong>furniswap2026</strong></div>
         </form>
       </div>
 
@@ -9141,18 +9140,8 @@ function closeAdminModal() {
 
 function handleAdminPasscodeSubmit(e) {
   e.preventDefault();
-  const input = document.getElementById('adminPasscodeInput');
-  const pass = input ? input.value.trim() : '';
-
-  if (pass === 'admin123' || pass === 'furniswap2026') {
-    sessionStorage.setItem('furniswap_admin_authenticated', 'true');
-    isAdminLoggedIn = true;
-    document.getElementById('adminAuthGate').style.display = 'none';
-    document.getElementById('adminMainInterface').style.display = 'flex';
-    refreshAdminDashboard();
-  } else {
-    alert('Invalid passcode. Default passcode is: admin123 or furniswap2026');
-  }
+  // Passcode sign-in removed. The team reviews quotes on the protected /admin page.
+  alert('This old admin panel is switched off. Please use the /admin page.');
 }
 
 function handleAdminLogout() {

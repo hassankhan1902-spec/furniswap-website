@@ -1,6 +1,6 @@
 // Trade-in credit calculator shared by the AI pricing step and the admin page.
-// The numbers mirror ValuationEngine in index.html (the public calculator):
-// keep both in sync when benchmarks or factors change.
+// The homepage no longer has a public calculator, so this file is the place
+// to change benchmarks and factors.
 
 export const BENCHMARKS = {
   'sofa-5': { name: '5-Seater Sofa Suite (3+2)', base: 95000 },
@@ -55,7 +55,7 @@ export const MIN_OLX_COMPARABLES = 3;
 
 const roundTo500 = n => Math.round(n / 500) * 500;
 
-// Same formula as ValuationEngine.calculate() in index.html.
+// credit range = benchmark × age × material × condition rate (min..max).
 export function calculateCredit(typeKey, conditionKey, ageKey, materialKey) {
   const bench = BENCHMARKS[typeKey] || BENCHMARKS.other;
   const cond = CONDITION_RATES[conditionKey] || CONDITION_RATES.good;

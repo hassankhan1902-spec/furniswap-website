@@ -68,8 +68,8 @@ Drive stays the single place where data lives:
   - **Re-run AI**
   - **Send on WhatsApp**: opens WhatsApp with the customer's number and the quote message
     filled in; a team member presses Send
-- The old in-page admin panel ("admin123" passcode, which anyone can read in the page
-  source) should be removed once this replaces it.
+- The old in-page admin panel (its passcode was readable in the page source) should be
+  removed once this replaces it.
 
 ## Files
 - `functions/_lib/valuation.js`: shared calculator
