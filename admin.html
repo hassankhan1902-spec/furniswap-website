@@ -165,6 +165,7 @@
       age_assumed: 'Age not visible: 3–5 yrs assumed',
       photo_issues: 'Photo problems',
       olx_cap_applied: 'Capped by OLX prices',
+      market_check_manual: 'Check OLX prices by hand',
     };
     const STATUS_TEXT = { new: 'Waiting for AI', pricing: 'AI working', priced: 'Ready to review', failed: 'AI failed', stalled: 'AI stalled', approved: 'Approved', sent: 'Sent' };
 
@@ -201,7 +202,7 @@
         items = data.items;
         aiEnabled = data.aiEnabled;
         $('who').textContent = data.admin || '';
-        notice(aiEnabled ? '' : 'AI pricing is off: ANTHROPIC_API_KEY is not set in Cloudflare.', !aiEnabled);
+        notice(aiEnabled ? '' : 'AI pricing is off: the Workers AI binding "AI" is not set up in Cloudflare.', !aiEnabled);
         render();
         autoPrice();
       } catch (err) {
@@ -336,9 +337,9 @@
 
         <div class="card">
           <h3>Comparable listings</h3>
-          ${comps ? `<table><thead><tr><th>Source</th><th>Listing</th><th class="num">Price</th><th>Match</th></tr></thead><tbody>${comps}</tbody></table>` : '<p class="hint" style="margin:0;">No priced listings found.</p>'}
+          ${comps ? `<table><thead><tr><th>Source</th><th>Listing</th><th class="num">Price</th><th>Match</th></tr></thead><tbody>${comps}</tbody></table>` : '<p class="hint" style="margin:0;">No automatic market search. Check prices by hand.</p>'}
           ${olxSearch ? `<p class="hint" style="margin:10px 0 0;">Check yourself: <a href="${esc(olxSearch)}" target="_blank" rel="noopener noreferrer">search OLX for “${esc(a.searchQuery)}”</a></p>` : ''}
-          <p class="hint" style="margin:6px 0 0;">${esc(q.model)} · ${esc(q.usage && q.usage.webSearches)} searches · priced ${esc(fmtDate(q.pricedAt))}</p>
+          <p class="hint" style="margin:6px 0 0;">${esc(q.model)} · ${q.usage && q.usage.neurons != null ? `${esc(q.usage.neurons)} neurons · ${esc((q.usage.ms / 1000).toFixed(1))}s · ` : ''}priced ${esc(fmtDate(q.pricedAt))}</p>
         </div>` : `
         <div class="card"><h3>AI assessment</h3><p class="hint" style="margin:0;">${status === 'pricing' ? 'The AI is working on this one…' : 'Not priced yet.'}</p></div>`}
 
@@ -354,11 +355,63 @@
             <button class="btn secondary" type="button" id="dPrice" ${aiEnabled ? '' : 'disabled'}>${q ? 'Re-run AI' : 'Run AI'}</button>
           </div>
           <p class="hint" id="dMsg" role="status" style="margin:8px 0 0;">${r && r.approvedBy ? `Approved by ${esc(r.approvedBy)} · ${esc(fmtDate(r.approvedAt))}` : ''}${r && r.sentAt ? ` · sent ${esc(fmtDate(r.sentAt))}` : ''}</p>
+        </div>
+
+        <div class="card">
+          <h3>Compare AI models</h3>
+          <p class="hint" style="margin:0 0 8px;">Runs several Cloudflare models on these photos side by side. It doesn't change the quote.</p>
+          <button class="btn secondary" type="button" id="dBench" ${aiEnabled ? '' : 'disabled'}>Run comparison</button>
+          <div id="dBenchOut" style="margin-top:10px; overflow-x:auto;"><span class="hint">Loading saved runs…</span></div>
         </div>`;
 
       $('dApprove').addEventListener('click', approve);
       $('dWhatsApp').addEventListener('click', sendWhatsApp);
       $('dPrice').addEventListener('click', rerun);
+      $('dBench').addEventListener('click', runBenchmark);
+      loadBenchmark();
+    }
+
+    // ------------------------------------------------------------ model comparison
+    const shortModel = m => String(m).replace(/^@cf\//, '');
+
+    function renderBenchRun(run) {
+      if (!run) return '<span class="hint">No comparison run yet.</span>';
+      const rows = run.results.map(x => {
+        if (!x.ok) return `<tr><td>${esc(shortModel(x.model))}</td><td colspan="5"><span class="conf low">${esc(x.code)}</span> <span class="hint">${esc(x.error)}</span></td><td class="num">${esc(((x.ms || 0) / 1000).toFixed(1))}s</td><td class="num">—</td></tr>`;
+        const a = x.assessment, u = x.usage;
+        return `<tr>
+          <td>${esc(shortModel(x.model))}${u.imagesSent < run.photos ? `<br><span class="hint">${esc(u.imagesSent)} photo only</span>` : ''}</td>
+          <td>${esc(current.labels.types[a.typeKey] || a.typeKey)}${conf(a.typeConfidence)}</td>
+          <td>${esc(a.materialKey)}${conf(a.materialConfidence)}</td>
+          <td>${esc(current.labels.conditions[a.conditionKey] || a.conditionKey)}${conf(a.conditionConfidence)}</td>
+          <td>${esc(a.ageKey)}</td>
+          <td class="num">${rs(x.minCredit)} – ${rs(x.maxCredit).replace('Rs ', '')}</td>
+          <td class="num">${esc((u.ms / 1000).toFixed(1))}s</td>
+          <td class="num">${esc(u.neurons)}<br><span class="hint">$${esc(u.costUsd.toFixed(4))}</span></td>
+        </tr>`;
+      }).join('');
+      return `<p class="hint" style="margin:0 0 6px;">${esc(fmtDate(run.at))} · ${esc(run.photos)} photos${run.finalCredit != null ? ` · team's final credit: <b>${rs(run.finalCredit)}</b>` : ''}</p>
+        <table><thead><tr><th>Model</th><th>Type</th><th>Material</th><th>Condition</th><th>Age</th><th class="num">Credit</th><th class="num">Time</th><th class="num">Neurons</th></tr></thead><tbody>${rows}</tbody></table>
+        <details style="margin-top:8px;"><summary class="hint">What each model saw</summary>${run.results.filter(x => x.ok).map(x => `<p style="margin:6px 0;"><b>${esc(shortModel(x.model))}:</b> ${esc(x.assessment.itemDescription)} <span class="hint">Condition: ${esc(x.assessment.conditionNotes)}</span></p>`).join('')}</details>`;
+    }
+
+    async function loadBenchmark() {
+      const folderId = current.folderId;
+      try {
+        const data = await api(`/api/admin/benchmark?folderId=${encodeURIComponent(folderId)}`);
+        if (current && current.folderId === folderId) $('dBenchOut').innerHTML = renderBenchRun(data.runs[0]);
+      } catch (err) { if ($('dBenchOut')) $('dBenchOut').innerHTML = `<span class="hint">${esc(err.message)}</span>`; }
+    }
+
+    async function runBenchmark() {
+      const folderId = current.folderId;
+      $('dBench').disabled = true;
+      $('dBenchOut').innerHTML = '<span class="hint">Running all models on these photos (up to a minute)…</span>';
+      try {
+        const data = await api('/api/admin/benchmark', { method: 'POST', body: JSON.stringify({ folderId }) });
+        if (current && current.folderId === folderId) $('dBenchOut').innerHTML = renderBenchRun(data.run);
+      } catch (err) { if ($('dBenchOut')) $('dBenchOut').innerHTML = `<div class="notice err">${esc(err.message)}</div>`; }
+      if ($('dBench')) $('dBench').disabled = !aiEnabled;
     }
 
     function setBusy(on, msg) {
@@ -382,7 +435,7 @@
 
     async function rerun() {
       if (!confirmRerun()) return;
-      setBusy(true, 'AI is assessing the photos (about 30–60 seconds)…');
+      setBusy(true, 'AI is assessing the photos (about 10–30 seconds)…');
       try {
         await api(`/api/admin/submissions/${encodeURIComponent(current.folderId)}`, { method: 'POST', body: JSON.stringify({ action: 'price', force: true }) });
         await openDetail(current.folderId);

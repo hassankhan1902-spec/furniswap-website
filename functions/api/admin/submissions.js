@@ -1,7 +1,7 @@
 // GET /api/admin/submissions: newest submissions with their status and AI price range.
 import { adminJson } from './_middleware.js';
 import { getAccessToken, listSubmissionFolders } from '../../_lib/drive.js';
-import { STALE_PRICING_MS } from '../../_lib/pricing.js';
+import { STALE_PRICING_MS, aiEnabled, currentModel } from '../../_lib/pricing.js';
 
 export async function onRequestGet({ env, data }) {
   const token = await getAccessToken(env);
@@ -26,5 +26,5 @@ export async function onRequestGet({ env, data }) {
       error: p.error || null,
     };
   });
-  return adminJson(200, { ok: true, admin: data.adminEmail, aiEnabled: !!env.ANTHROPIC_API_KEY, items });
+  return adminJson(200, { ok: true, admin: data.adminEmail, aiEnabled: aiEnabled(env), model: currentModel(env), items });
 }
