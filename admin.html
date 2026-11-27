@@ -166,6 +166,7 @@
       photo_issues: 'Photo problems',
       olx_cap_applied: 'Capped by OLX prices',
       market_check_manual: 'Check OLX prices by hand',
+      market_data_from_search: 'OLX prices from Google search: may be stale',
     };
     const STATUS_TEXT = { new: 'Waiting for AI', pricing: 'AI working', priced: 'Ready to review', failed: 'AI failed', stalled: 'AI stalled', approved: 'Approved', sent: 'Sent' };
 
@@ -277,7 +278,14 @@
       }
     }
 
-    function conf(c) { return c ? `<span class="conf ${c === 'low' ? 'low' : ''}">${esc(c)} confidence</span>` : ''; }
+    function marketNote(q) {
+      const s = q && q.usage && q.usage.search;
+      if (!s) return 'No automatic market search. Check prices by hand.';
+      if (s.error) return `The Google/OLX search failed (${s.error}). Check prices by hand.`;
+      return 'Google search found no usable OLX listings. Check prices by hand.';
+    }
+
+    function conf(c) { return c ?`<span class="conf ${c === 'low' ? 'low' : ''}">${esc(c)} confidence</span>` : ''; }
 
     function renderDetail() {
       const { submission: s, quote: q, review: r, labels, status, error } = current;
@@ -337,7 +345,9 @@
 
         <div class="card">
           <h3>Comparable listings</h3>
-          ${comps ? `<table><thead><tr><th>Source</th><th>Listing</th><th class="num">Price</th><th>Match</th></tr></thead><tbody>${comps}</tbody></table>` : '<p class="hint" style="margin:0;">No automatic market search. Check prices by hand.</p>'}
+          ${comps ? `<table><thead><tr><th>Source</th><th>Listing</th><th class="num">Price</th><th>Match</th></tr></thead><tbody>${comps}</tbody></table>` : `<p class="hint" style="margin:0;">${esc(marketNote(q))}</p>`}
+          ${c && c.olx && c.olx.count ? `<p class="hint" style="margin:10px 0 0;">OLX median of ${esc(c.olx.count)} close matches: ${rs(c.olx.median)}${c.olx.cap ? ` · cap ${esc(c.olx.capPct)}% = ${rs(c.olx.cap)}${c.olx.applied ? ' (applied)' : ''}` : ''}</p>` : ''}
+          ${q.usage && q.usage.search && !q.usage.search.error && (q.usage.search.queries || []).length ? `<p class="hint" style="margin:6px 0 0;">Google searches: ${q.usage.search.queries.map(s => `“${esc(s)}”`).join(', ')} · ${esc((q.usage.search.ms / 1000).toFixed(1))}s</p>` : ''}
           ${olxSearch ? `<p class="hint" style="margin:10px 0 0;">Check yourself: <a href="${esc(olxSearch)}" target="_blank" rel="noopener noreferrer">search OLX for “${esc(a.searchQuery)}”</a></p>` : ''}
           <p class="hint" style="margin:6px 0 0;">${esc(q.model)} · ${q.usage && q.usage.neurons != null ? `${esc(q.usage.neurons)} neurons · ${esc((q.usage.ms / 1000).toFixed(1))}s · ` : ''}priced ${esc(fmtDate(q.pricedAt))}</p>
         </div>` : `

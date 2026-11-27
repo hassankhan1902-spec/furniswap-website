@@ -2,14 +2,16 @@
 //   1. A Workers AI vision model looks at the photos and picks the calculator
 //      categories (type, material, condition, age).
 //   2. The calculator in valuation.js turns those picks into a credit range.
-//      There is no automatic market search: open models on Workers AI can't
-//      search the web, and OLX blocks automated access. The admin page links
-//      to an OLX search so the team can check prices by hand.
+//      When GEMINI_API_KEY is set, market.js asks Gemini (Google Search
+//      grounding) for comparable OLX listings, which feed the OLX cap.
+//      Otherwise (or if that search fails) the team checks OLX by hand from
+//      the link on the admin page.
 //   3. quote.json is written to the submission's Drive folder and the folder's
 //      status moves to "priced" (or "failed").
 //
 // Needs the Workers AI binding named AI (Pages → Settings → Bindings).
-// Optional env vars: AI_MODEL (default DEFAULT_MODEL below), OLX_CAP_PCT.
+// Optional env vars: AI_MODEL (default DEFAULT_MODEL below), OLX_CAP_PCT,
+// GEMINI_API_KEY / GEMINI_MODEL / AI_GATEWAY_ID (see market.js).
 //
 // The previous Claude Haiku version is parked in functions/_legacy/anthropic/.
 
@@ -20,6 +22,7 @@ import {
 import {
   getAccessToken, getFolder, readJsonFile, downloadFile, writeJsonFile, setAppProperties,
 } from './drive.js';
+import { marketEnabled, findOlxComparables } from './market.js';
 
 export const DEFAULT_MODEL = '@cf/google/gemma-4-26b-a4b-it';
 
@@ -162,11 +165,19 @@ export async function assessPhotos(env, images, modelSpec) {
 }
 
 // Turns an assessment into the credit range and review flags.
-export function quoteFromAssessment(env, a) {
+// comparables: OLX listings from market.js; null means no market search ran.
+export function quoteFromAssessment(env, a, comparables = null) {
   const ageKey = a.ageKey === 'unknown' ? DEFAULT_AGE_KEY : a.ageKey;
   const capPct = Number(env.OLX_CAP_PCT) > 0 ? Number(env.OLX_CAP_PCT) : DEFAULT_OLX_CAP_PCT;
-  const credit = applyOlxCap(calculateCredit(a.typeKey, a.conditionKey, ageKey, a.materialKey), [], capPct);
-  const flags = ['market_check_manual'];
+  const credit = applyOlxCap(calculateCredit(a.typeKey, a.conditionKey, ageKey, a.materialKey), comparables || [], capPct);
+  const flags = [];
+  if (comparables == null) {
+    flags.push('market_check_manual');
+  } else {
+    flags.push('market_data_from_search');
+    if (credit.olx.count < 3) flags.push('low_market_data');
+    if (credit.olx.applied) flags.push('olx_cap_applied');
+  }
   if ([a.typeConfidence, a.conditionConfidence].includes('low')) flags.push('needs_human_look');
   if (a.materialConfidence === 'low') flags.push('material_uncertain');
   if (a.ageKey === 'unknown') flags.push('age_assumed');
@@ -197,7 +208,13 @@ export async function priceSubmission(env, folderId, { force = false } = {}) {
     const images = await loadPhotos(token, submission);
     const model = currentModel(env);
     const { assessment: a, usage } = await assessPhotos(env, images, model);
-    const { ageKey, credit, flags } = quoteFromAssessment(env, a);
+    let comparables = null;
+    if (marketEnabled(env)) {
+      const market = await findOlxComparables(env, a);
+      usage.search = market.search;
+      if (!market.search.error) comparables = market.comparables;
+    }
+    const { ageKey, credit, flags } = quoteFromAssessment(env, a, comparables);
 
     const quote = {
       version: 2,
@@ -205,7 +222,7 @@ export async function priceSubmission(env, folderId, { force = false } = {}) {
       pricedAt: new Date().toISOString(),
       model,
       assessment: { ...a, ageKeyUsed: ageKey },
-      comparables: [],
+      comparables: comparables || [],
       credit,
       flags,
       usage,

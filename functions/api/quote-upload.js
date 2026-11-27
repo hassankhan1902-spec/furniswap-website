@@ -13,6 +13,8 @@
 //                          found or created in the account's My Drive
 //   TURNSTILE_SECRET       optional; when set, a valid Turnstile token is required
 //   AI (binding)           optional Workers AI binding; when set, uploads are priced automatically
+//   GEMINI_API_KEY, GEMINI_MODEL, AI_GATEWAY_ID
+//                          optional; OLX comparables via Gemini + Google Search (see _lib/market.js)
 //   NOTIFY_EMAIL_TO, CF_ACCOUNT_ID, CF_EMAIL_API_TOKEN
 //                          optional; when set, each upload emails the owner (see _lib/notify.js)
 
