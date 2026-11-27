@@ -69,3 +69,19 @@ On the live site, open **#photo-quote**, enter a name and number, add 2–3 phon
 You should get a reference like `FS-20261125-7K3Q`, and a matching folder in Drive within seconds
 (each photo ≈ 300–400 KB, 1600 px on the long edge). If it fails, check
 **Workers & Pages → furniswap-website → Functions → Real-time logs** for the `quote-upload` error.
+
+## Email notification for each upload
+
+`functions/_lib/notify.js` emails the owner after every successful upload (name, WhatsApp
+link, photo count, link to the Drive folder). It uses the Cloudflare Email Sending REST API,
+because Pages Functions have no `send_email` binding. It runs in the background and never
+blocks or fails the upload.
+
+- **Email Service → Email Sending**: furniswap.pk is onboarded (records on `cf-bounce.furniswap.pk`
+  plus `_dmarc`). On the free plan you can only send to *verified destination addresses*
+  (Email Service → Email Routing → Destination addresses).
+- **Pages variables (Production)**: `NOTIFY_EMAIL_TO` (comma-separated for several),
+  `CF_ACCOUNT_ID`, `CF_EMAIL_API_TOKEN` (secret; account API token with **Email Sending: Edit**),
+  optional `NOTIFY_EMAIL_FROM` (default `quotes@furniswap.pk`).
+- If an email doesn't arrive, check spam, then **Functions → Real-time logs** for
+  `upload notification email failed`.
